@@ -336,4 +336,14 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <distributionManagement>
+    <repository>
+      <id>deegree-releases</id>
+      <url>http://artefacts.deegree.org/libs-releases-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>deegree-snapshots</id>
+      <url>http://artefacts.deegree.org/libs-snapshots-local</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
