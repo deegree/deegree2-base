@@ -1,14 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>deegree2-dictionary</groupId>
   <artifactId>deegree2-dictionary</artifactId>
-  <packaging>war</packaging>
   <name>deegree2-dictionary</name>
   <description>deegree Dictionary mainly used with iGeoDesktop</description>
+  <packaging>war</packaging>
   <parent>
-    <groupId>org.deegree</groupId>
-    <artifactId>deegree2</artifactId>
+    <groupId>org.deegree2</groupId>
+    <artifactId>deegree2-base</artifactId>
     <version>2.6-pre1-SNAPSHOT</version>
   </parent>
   <dependencies>
@@ -18,8 +17,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.deegree</groupId>
-      <artifactId>deegree2-base</artifactId>
+      <groupId>org.deegree2</groupId>
+      <artifactId>deegree2-core</artifactId>
       <version>2.6-pre1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
