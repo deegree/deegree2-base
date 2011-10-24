@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.graphics.sld;
 
 import java.util.ArrayList;
@@ -40,34 +40,40 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.deegree.datatypes.QualifiedName;
+import org.deegree.framework.util.StringTools;
 import org.deegree.io.datastore.PropertyPathResolvingException;
+import org.deegree.model.feature.FeatureProperty;
 import org.deegree.model.filterencoding.Expression;
 import org.deegree.model.filterencoding.Filter;
 import org.deegree.model.filterencoding.FilterTools;
 import org.deegree.ogcbase.PropertyPath;
+import org.deegree.ogcbase.PropertyPathFactory;
 
 /**
- * Collects all property names used by a list of styles. E.g. this can be used to optimze GetFeature
- * requests from a WMS against a WFS.
- *
+ * Collects all property names used by a list of styles. E.g. this can be used to optimze GetFeature requests from a WMS
+ * against a WFS.
+ * 
  * @version $Revision$
  * @author <a href="mailto:poth@lat-lon.de">Andreas Poth</a>
  * @author last edited by: $Author$
- *
+ * 
  * @version 1.0. $Revision$, $Date$
- *
+ * 
  * @since 2.0
  */
 public class StyleUtils {
 
     /**
      * @return a list of all
-     *
+     * 
+     * @param featureType
      * @param styles
      * @param scaleDen
      * @throws PropertyPathResolvingException
      */
-    public static List<PropertyPath> extractRequiredProperties( List<UserStyle> styles, double scaleDen )
+    public static List<PropertyPath> extractRequiredProperties( QualifiedName featureType, List<UserStyle> styles,
+                                                                double scaleDen )
                             throws PropertyPathResolvingException {
         List<PropertyPath> pp = new ArrayList<PropertyPath>();
 
@@ -85,7 +91,7 @@ public class StyleUtils {
                         Symbolizer[] sym = rules[k].getSymbolizers();
                         for ( int d = 0; d < sym.length; d++ ) {
                             if ( sym[d] instanceof PointSymbolizer ) {
-                                pp = extractPPFromPointSymbolizer( (PointSymbolizer) sym[d], pp );
+                                pp = extractPPFromPointSymbolizer( featureType, (PointSymbolizer) sym[d], pp );
                             } else if ( sym[d] instanceof LineSymbolizer ) {
                                 pp = extractPPFromLineSymbolizer( (LineSymbolizer) sym[d], pp );
                             } else if ( sym[d] instanceof PolygonSymbolizer ) {
@@ -220,7 +226,8 @@ public class StyleUtils {
         return pp;
     }
 
-    private static List<PropertyPath> extractPPFromPointSymbolizer( PointSymbolizer symbolizer, List<PropertyPath> pp )
+    private static List<PropertyPath> extractPPFromPointSymbolizer( QualifiedName featureType,
+                                                                    PointSymbolizer symbolizer, List<PropertyPath> pp )
                             throws PropertyPathResolvingException {
 
         Graphic graphic = symbolizer.getGraphic();
@@ -232,7 +239,7 @@ public class StyleUtils {
             if ( graphic.getRotation() != null ) {
                 pp = extractPPFromParamValueType( graphic.getRotation(), pp );
             }
-            
+
             if ( graphic.getDisplacement() != null ) {
                 pp = extractPPFromParamValueType( graphic.getDisplacement()[0], pp );
                 pp = extractPPFromParamValueType( graphic.getDisplacement()[1], pp );
@@ -245,8 +252,23 @@ public class StyleUtils {
             if ( symbolizer.getGeometry() != null ) {
                 pp.add( symbolizer.getGeometry().getPropertyPath() );
             }
-            
-            
+
+            if ( graphic.getMarksAndExtGraphics().length > 0 ) {
+                for ( Object obj : graphic.getMarksAndExtGraphics() ) {
+                    if ( obj instanceof ExternalGraphic ) {
+                        String file = ( (ExternalGraphic) obj ).getOnlineResource().toExternalForm();
+                        String[] tags = StringTools.extractStrings( file, "$", "$" );
+                        if ( tags != null ) {
+                            for ( int i = 0; i < tags.length; i++ ) {
+                                String tag = tags[i].substring( 1, tags[i].length() - 1 );
+                                QualifiedName pn = new QualifiedName( tag, featureType.getNamespace() );
+                                pp.add( PropertyPathFactory.createPropertyPath( pn ) );
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         return pp;

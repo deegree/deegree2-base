@@ -316,7 +316,7 @@ public class GetMapServiceInvokerForNL extends GetMapServiceInvoker implements C
         if ( style != null ) {
             List<UserStyle> styleList = new ArrayList<UserStyle>();
             styleList.add( style );
-            pp = extractRequiredProperties( styleList, scaleDen );
+            pp = extractRequiredProperties( ds.getName(), styleList, scaleDen );
         } else {
             pp = new ArrayList<PropertyPath>();
         }
@@ -325,7 +325,7 @@ public class GetMapServiceInvokerForNL extends GetMapServiceInvoker implements C
             pp.add( geomPP );
         }
 
-        // handling of vendor specific parameters "filterproperty" and "filtervalue"
+        // handling of vendor specific parameters "filter property" and "filter value"
         String filterProperty = request.getVendorSpecificParameter( "FILTERPROPERTY" );
         String filterValue = request.getVendorSpecificParameter( "FILTERVALUE" );
 
@@ -370,12 +370,12 @@ public class GetMapServiceInvokerForNL extends GetMapServiceInvoker implements C
         sb.append( "<Query typeName='" + ds.getName().getPrefixedName() + "'>" );
 
         // please note that this code CANNOT BE UNCOMMENTED as it severely affects performance in many cases!
-//        for ( int j = 0; j < pp.size(); j++ ) {
-//            if ( !pp.get( j ).getAsString().endsWith( "$SCALE" ) ) {
-//                sb.append( "<PropertyName>" ).append( pp.get( j ).getAsString() );
-//                sb.append( "</PropertyName>" );
-//            }
-//        }
+        for ( int j = 0; j < pp.size(); j++ ) {
+            if ( !pp.get( j ).getAsString().endsWith( "$SCALE" ) ) {
+                sb.append( "<PropertyName>" ).append( pp.get( j ).getAsString() );
+                sb.append( "</PropertyName>" );
+            }
+        }
 
         // add filters to list
         // BBOX filter

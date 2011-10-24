@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.ogcwebservices.wms;
 
 import static java.lang.Boolean.FALSE;
@@ -77,13 +77,13 @@ import org.w3c.dom.Element;
  * class for accessing the data of one user layer and creating <tt>DisplayElement</tt>s and a <tt>Thrme</tt> from it.
  * The class extends <tt>Thread</tt> and implements the run method, so that a parallel data accessing from several
  * layers is possible.
- *
+ * 
  * @version $Revision$
  * @author <a href="mailto:poth@lat-lon.de">Andreas Poth</a>
  * @author last edited by: $Author$
- *
+ * 
  * @version 1.0. $Revision$, $Date$
- *
+ * 
  * @since 2.0
  */
 class GetMapServiceInvokerForUL extends GetMapServiceInvoker implements Callable<Object> {
@@ -95,7 +95,7 @@ class GetMapServiceInvokerForUL extends GetMapServiceInvoker implements Callable
     private UserStyle[] styles = null;
 
     /**
-     *
+     * 
      * @param handler
      * @param layer
      * @param scale
@@ -191,7 +191,7 @@ class GetMapServiceInvokerForUL extends GetMapServiceInvoker implements Callable
         FeatureTypeConstraint[] ftc = lfc.getFeatureTypeConstraint();
 
         List<UserStyle> styleList = Arrays.asList( styles );
-        List<PropertyPath> pp = StyleUtils.extractRequiredProperties( styleList, scaleDen );
+        List<PropertyPath> pp = StyleUtils.extractRequiredProperties( ftc[0].getFeatureTypeName(), styleList, scaleDen );
         LOG.logDebug( "required properties: ", pp );
         pp = findGeoProperties( layer, ftc, pp );
         Map<String, URI> namesp = extractNameSpaceDef( pp );
@@ -252,17 +252,17 @@ class GetMapServiceInvokerForUL extends GetMapServiceInvoker implements Callable
         return FALSE;
         /*
          * TODO RemoteOWS remoteOWS = layer.getRemoteOWS(); URL url = remoteOWS.getOnlineResource();
-         *
+         * 
          * NetWorker nw = new NetWorker( url ); MemoryCacheSeekableStream mcss = new MemoryCacheSeekableStream(
          * nw.getInputStream() );
-         *
+         * 
          * RenderedOp rop = JAI.create("stream", mcss);
-         *
+         * 
          * GC_GridCoverage gc = new ImageGridCoverage(rop.getAsBufferedImage(), request.getBoundingBox(), reqCRS,
          * false); mcss.close();
-         *
+         * 
          * org.deegree.graphics.Layer rl = MapFactory.createRasterLayer(layer.getName(), gc);
-         *
+         * 
          * putTheme(index, MapFactory.createTheme(layer.getName(), rl)); mcss.close(); increaseCounter();
          */
 
