@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.ogcwebservices.wms;
 
 import static org.deegree.enterprise.WebUtils.enableProxyUsage;
@@ -105,7 +105,7 @@ import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 
 /**
  * An instance of the class acts as a wrapper to a remote WMS.
- *
+ * 
  * @version $Revision$
  * @author <a href="mailto:poth@lat-lon.de">Andreas Poth</a>
  */
@@ -155,7 +155,7 @@ public class RemoteWMService implements OGCWebService {
 
     /**
      * Creates a new instance of RemoteWMService
-     *
+     * 
      * @param capabilities
      */
     public RemoteWMService( WMSCapabilities capabilities ) {
@@ -311,7 +311,11 @@ public class RemoteWMService implements OGCWebService {
                 }
             }
             for ( String srs : l.getSrs() ) {
-                crs.add( CRSFactory.create( srs ) );
+                try {
+                    crs.add( CRSFactory.create( srs ) );
+                } catch ( Exception e ) {
+                    LOG.logWarning( "CRS: " + crs + " is not known and will be ignored" );
+                }
             }
         }
         return crs;
@@ -320,10 +324,10 @@ public class RemoteWMService implements OGCWebService {
     /**
      * the method performs the handling of the passed OGCWebServiceEvent directly and returns the result to the calling
      * class/method
-     *
+     * 
      * @param request
      *            request (WMS, WCS, WFS, WCAS, WCTS, WTS, Gazetter) to perform
-     *
+     * 
      * @throws OGCWebServiceException
      */
     public Object doService( OGCWebServiceRequest request )
@@ -363,7 +367,7 @@ public class RemoteWMService implements OGCWebService {
     /**
      * performs a GetMap request against the remote service. The result contains the map decoded in the desired format
      * as a byte array.
-     *
+     * 
      * @param request
      *            GetMap request
      * @return the requested map-image
@@ -501,7 +505,7 @@ public class RemoteWMService implements OGCWebService {
      * reads feature infos from the remote WMS by performing a FeatureInfo request against it. As long the result of a
      * FeatureInfo request is generic (for usual it is som HTML) it isn't easy to combine the result with that of other
      * WMS's
-     *
+     * 
      * @param request
      *            feature info request
      * @return the response of the GetFeatureInfo request.
@@ -609,7 +613,7 @@ public class RemoteWMService implements OGCWebService {
 
     /**
      * reads the capabilities from the remote WMS by performing a GetCapabilities request against it.
-     *
+     * 
      * @param request
      *            capabilities request
      * @return remote capabilities
@@ -660,8 +664,8 @@ public class RemoteWMService implements OGCWebService {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @param request
      *            get styles request (WMS 1.1.1 - SLD)
      * @return <code>null</code>
@@ -686,8 +690,8 @@ public class RemoteWMService implements OGCWebService {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @param request
      *            put styles request (WMS 1.1.1 - SLD)
      * @return <code>null</code>
@@ -713,8 +717,8 @@ public class RemoteWMService implements OGCWebService {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @param request
      *            describe layer request (WMS 1.1.1 - SLD)
      * @return <code>null</code>
@@ -740,8 +744,8 @@ public class RemoteWMService implements OGCWebService {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @param request
      *            describe layer request (WMS 1.1.1 - SLD)
      * @return <code>null</code>
@@ -781,12 +785,12 @@ public class RemoteWMService implements OGCWebService {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @param is
-     *
+     * 
      * @return thr content as String
-     *
+     * 
      * @throws IOException
      */
     protected String getInputStreamContent( InputStream is )
