@@ -43,7 +43,6 @@ import java.util.Map;
 import org.deegree.datatypes.QualifiedName;
 import org.deegree.framework.util.StringTools;
 import org.deegree.io.datastore.PropertyPathResolvingException;
-import org.deegree.model.feature.FeatureProperty;
 import org.deegree.model.filterencoding.Expression;
 import org.deegree.model.filterencoding.Filter;
 import org.deegree.model.filterencoding.FilterTools;
@@ -82,9 +81,9 @@ public class StyleUtils {
             for ( int j = 0; j < fts.length; j++ ) {
                 Rule[] rules = fts[j].getRules();
                 for ( int k = 0; k < rules.length; k++ ) {
-                    double minScale = rules[k].getMinScaleDenominator();
-                    double maxScale = rules[k].getMaxScaleDenominator();
-                    if ( minScale <= scaleDen && maxScale > scaleDen ) {
+//                    double minScale = rules[k].getMinScaleDenominator();
+//                    double maxScale = rules[k].getMaxScaleDenominator();
+                    //if ( minScale <= scaleDen && maxScale > scaleDen ) {
                         Filter filter = rules[k].getFilter();
                         List<PropertyPath> list = FilterTools.extractPropertyPaths( filter );
                         pp.addAll( list );
@@ -100,7 +99,7 @@ public class StyleUtils {
                                 pp = extractPPFromTextSymbolizer( (TextSymbolizer) sym[d], pp );
                             }
                         }
-                    }
+                    //}
                 }
             }
         }
