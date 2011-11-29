@@ -7,6 +7,7 @@
   <name>deegree2-base</name>
   <description>deegree2-base</description>
   <packaging>pom</packaging>
+
   <modules>
     <module>deegree2-core</module>
     <module>deegree2-fileaccess</module>
