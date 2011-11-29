@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.model.spatialschema;
 
 import java.io.FileOutputStream;
@@ -63,10 +63,10 @@ import alltests.Configuration;
  * <li>remove obsessive output (JUnit tests should not print to System.out)</li>
  * <li>add check for exported geometries (schema validation or XMLUnit)</li>
  * </ul>
- *
+ * 
  * @author <a href="mailto:tfr@users.sourceforge.net">Torsten Friebe </a>
  * @author last edited by: $Author: rbezema $
- *
+ * 
  * @version $Revision: 10877 $, $Date: 2008-04-01 15:05:11 +0000 (Di, 01 Apr 2008) $
  */
 public strictfp class GMLGeometryAdapterTest extends TestCase {
@@ -79,7 +79,7 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
 
     /**
      * Constructor for WFSServiceTest.
-     *
+     * 
      * @param arg0
      */
 
@@ -301,11 +301,13 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
 
         LOG.logInfo( " --- \t MultiLineString \t --- " );
         double[][][] points = {
-                               { { 4586.790988700565f, 2604.7224576271187f }, { 393.268333333333f, 2315.6079378531076f },
-                                { 5301.969011299436f, 1509.130593220339f}, { 4647.657203389831f, 2011.2768644067799f },
+                               { { 4586.790988700565f, 2604.7224576271187f },
+                                { 393.268333333333f, 2315.6079378531076f }, { 5301.969011299436f, 1509.130593220339f },
+                                { 4647.657203389831f, 2011.2768644067799f },
                                 { 5591.0835310734465f, 2011.2768644067799f } },
                                { { 4525.9247740113f, 3426.4163559322037f }, { 5317.185564971752f, 3167.734943502825f },
-                                { 4632.440649717514f, 2924.2700847457627f }, { 5332.402118644068f, 2756.8879943502825f } } };
+                                { 4632.440649717514f, 2924.2700847457627f },
+                                { 5332.402118644068f, 2756.8879943502825f } } };
 
         String coords = "<gml:MultiLineString " + "xmlns:gml=\"http://www.opengis.net/gml\">"
                         + "<gml:lineStringMember><gml:LineString>" + "<gml:coordinates>"
@@ -320,8 +322,8 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
 
         // 2 LineString Members
         double[][][] multiLineStringPoints = {
-                                              { { 1.1f, 2.2f }, { 3.3f, 4.4f }, { 5.5f, 6.6f }, { 7.7f, 8.8f }, { 9.9f, 10.10f },
-                                               { 11.11f, 12.12f } },
+                                              { { 1.1f, 2.2f }, { 3.3f, 4.4f }, { 5.5f, 6.6f }, { 7.7f, 8.8f },
+                                               { 9.9f, 10.10f }, { 11.11f, 12.12f } },
                                               { { 13.13f, 14.14f }, { 15.15f, 16.16f }, { 17.17f, 18.18f } } };
 
         String coordinates = "<gml:MultiLineString" + " xmlns:gml=\"http://www.opengis.net/gml\">"
@@ -467,7 +469,7 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
         // different Polygons are determined by exteriors
         double[][][] polygons = {// exterior1
         { { 111, 111 }, { 111, 1000 }, { 999, 1000 }, { 999, 111 }, { 111, 111 } },
-        // exterior 2
+                // exterior 2
                 { { 100, 100 }, { 99, -99 }, { -88, -88 }, { -77, 77 }, { 100, 100 } } };
         /*
          * The Interiors of the Polygons defined above Polygons[0] has no Interior -> null Polygon[1] has 1 Interior
@@ -506,7 +508,7 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
     /**
      * Tests whether the conversion of a <gml:MultiGeometry> instance into a {@link MultiGeometry} instance produces
      * member geometries of the expected type.
-     *
+     * 
      * @throws SAXException
      * @throws IOException
      * @throws GeometryException
@@ -652,6 +654,7 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
 
     /*
      * Test wether the <tt>Curve</tt> object cv contains all Positions defined in 2-dimensional array points @param cv
+     * 
      * @param points
      */
     public void curveTesting( Curve cv, double[][] points ) {
@@ -677,13 +680,14 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
             LOG.logInfo( "\t*****************" );
             LOG.logInfo( "" );
 
-            assertTrue( "X coordinates expected to be equal", points[i][0] == curvePositons[i].getX() );
-            assertTrue( "Y coordinates expected to be equal", points[i][1] == curvePositons[i].getY() );
+            assertEquals( "X coordinates expected to be equal", points[i][0], curvePositons[i].getX(), 0.001 );
+            assertEquals( "Y coordinates expected to be equal", points[i][1], curvePositons[i].getY(), 0.001 );
         }
     }
 
     /*
      * Test wether curve[i] of the <tt>MultiCurve</tt>[ object mcv contains all Points defined points[i] @param mpt
+     * 
      * @param points
      */
     public void multiCurveTesting( MultiCurve mcv, double[][][] points ) {
@@ -700,7 +704,6 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
      * Test wether the exterior of the <tt>Surface</tt> object surface contains the Postions defined in ths
      * 2-dimensional array exterior and wether the interiors[i] contains the Position of interiors[i] @param mpt @param
      * exterior @param interiors
-     *
      */
     public void surfaceTesting( Surface surface, double[][] exterior, double[][][] interiors ) {
 
@@ -745,7 +748,6 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
 
     /*
      * Test wether surfExtPosition contains alls Positions defined in exterior @param exterior @param surfExtPosition
-     *
      */
     public void exteriorTesting( double[][] exterior, Position[] surfExtPosition ) {
 
@@ -767,7 +769,6 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
 
     /*
      * Test wether surfInteriors contains all Positions defined in ineterior @param interior @param surfInteriors
-     *
      */
     public void interiorsTesting( double[][][] interiors, Position[][] surfInteriors ) {
 
@@ -1074,7 +1075,7 @@ public strictfp class GMLGeometryAdapterTest extends TestCase {
 
     /**
      * Tests the exporting of a {@link MultiGeometry} instance into a <gml:MultiGeometry> element.
-     *
+     * 
      * @throws GeometryException
      * @throws IOException
      * @throws SAXException
