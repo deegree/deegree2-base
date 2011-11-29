@@ -290,5 +290,10 @@
       <groupId>org.jdesktop.j3d.vrml97</groupId>
       <artifactId>j3d-vrml97</artifactId>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
