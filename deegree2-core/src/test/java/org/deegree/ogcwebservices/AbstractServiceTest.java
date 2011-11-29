@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.ogcwebservices;
 
 import java.io.BufferedReader;
@@ -52,11 +52,14 @@ import org.deegree.framework.log.ILogger;
 import org.deegree.framework.log.LoggerFactory;
 import org.deegree.framework.util.ConvenienceFileFilter;
 
-import alltests.AllTests;
-
 public class AbstractServiceTest extends TestCase {
 
     private static ILogger LOG = LoggerFactory.getLogger( AbstractServiceTest.class );
+
+    public void testDummy() {
+        // to make junit happy
+    }
+
     protected Map<String, String> createKVPMap( URL fileURL )
                             throws IOException {
         Map<String, String> kvpMap = new HashMap<String, String>();
@@ -81,7 +84,7 @@ public class AbstractServiceTest extends TestCase {
      * Returns a filename that is suitable as a target to write the request result to.
      * <p>
      * The file will be placed in the "output"-subdirectory of the services resource directory.
-     *
+     * 
      * @param requestFile
      * @param outputDir
      * @return
@@ -108,7 +111,7 @@ public class AbstractServiceTest extends TestCase {
 
     /**
      * Returns all files in the given directory that end with the given extension.
-     *
+     * 
      * @param directoryURL
      * @param ext
      * @return

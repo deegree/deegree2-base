@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 
 package org.deegree.crs.projections;
 
@@ -52,13 +52,13 @@ import org.deegree.framework.log.LoggerFactory;
 
 /**
  * <code>ProjectionTest</code> is the base for all accuracy tests, this class doesn't really test anything.
- *
+ * 
  * @author <a href="mailto:bezema@lat-lon.de">Rutger Bezema</a>
- *
+ * 
  * @author last edited by: $Author: mschneider $
- *
+ * 
  * @version $Revision: 18195 $, $Date: 2009-06-18 17:55:39 +0200 (Do, 18 Jun 2009) $
- *
+ * 
  */
 public class ProjectionTest extends TestCase {
 
@@ -120,9 +120,13 @@ public class ProjectionTest extends TestCase {
 
     private final static Point2d epsilonDegree = new Point2d( DEGREE_EPSILON, DEGREE_EPSILON );
 
+    public void testDummy() {
+        // inserted to make junit happy
+    }
+
     /**
      * Creates an epsilon string with following layout axis.getName: origPoint - resultPoint = epsilon Unit.getName().
-     *
+     * 
      * @param sourceCoordinate
      *            on the given axis
      * @param targetCoordinate
@@ -133,8 +137,8 @@ public class ProjectionTest extends TestCase {
      *            of the coordinates
      * @return a String representation.
      */
-    private String createEpsilonString( boolean failure, double sourceCoordinate, double targetCoordinate,
-                                        double allowedEpsilon, Axis axis ) {
+    private static String createEpsilonString( boolean failure, double sourceCoordinate, double targetCoordinate,
+                                               double allowedEpsilon, Axis axis ) {
         double epsilon = sourceCoordinate - targetCoordinate;
         StringBuilder sb = new StringBuilder( 400 );
         sb.append( axis.getName() ).append( " (result - orig = error [allowedError]): " );
@@ -150,7 +154,7 @@ public class ProjectionTest extends TestCase {
     /**
      * Transforms the given coordinates in the sourceCRS to the given targetCRS and checks if they lie within the given
      * epsilon range to the reference point. If successful the transformed will be logged.
-     *
+     * 
      * @param origPoint
      *            to transform
      * @param referencePoint
@@ -166,8 +170,8 @@ public class ProjectionTest extends TestCase {
      * @throws AssertionError
      *             if one of the axis of the transformed point do not lie within the given epsilon range.
      */
-    protected String doAccuracyTest( Point2d origPoint, Point2d referencePoint, Point2d forwardEpsilons,
-                                     Projection projection, boolean inverse )
+    protected static String doAccuracyTest( Point2d origPoint, Point2d referencePoint, Point2d forwardEpsilons,
+                                            Projection projection, boolean inverse )
                             throws ProjectionException {
         assertNotNull( projection );
         assertNotNull( origPoint );
@@ -209,13 +213,13 @@ public class ProjectionTest extends TestCase {
 
     /**
      * Do a forward and inverse accuracy test, using the standard epsilon values.
-     *
+     * 
      * @param projection
      * @param source
      * @param target
      * @throws ProjectionException
      */
-    protected void doForwardAndInverse( Projection projection, Point2d source, Point2d target )
+    protected static void doForwardAndInverse( Projection projection, Point2d source, Point2d target )
                             throws ProjectionException {
         StringBuilder output = new StringBuilder();
         output.append( "Projecting forward -> '" );
@@ -253,7 +257,7 @@ public class ProjectionTest extends TestCase {
 
     /**
      * Helper method to test if the projections have given values, and do not change internally.
-     *
+     * 
      * @param toBeTested
      * @param falseNorthing
      * @param falseEasting
@@ -265,9 +269,9 @@ public class ProjectionTest extends TestCase {
      * @param name
      *            of the projection
      */
-    protected void consistencyTest( Projection toBeTested, double falseNorthing, double falseEasting,
-                                    Point2d naturalOrigin, Unit units, double scale, boolean conformal,
-                                    boolean equalArea, String name ) {
+    protected static void consistencyTest( Projection toBeTested, double falseNorthing, double falseEasting,
+                                           Point2d naturalOrigin, Unit units, double scale, boolean conformal,
+                                           boolean equalArea, String name ) {
         assertEquals( falseNorthing, toBeTested.getFalseNorthing() );
         assertEquals( falseEasting, toBeTested.getFalseEasting() );
         assertEquals( naturalOrigin, toBeTested.getNaturalOrigin() );
