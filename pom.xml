@@ -13,6 +13,7 @@
     <module>deegree2-dictionary</module>
     <module>deegree2-igeoportal</module>
   </modules>
+
   <licenses>
     <license>
       <name>GNU Lesser General Public License v3</name>
@@ -20,10 +21,12 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
   <properties>
     <targetJdk>1.6</targetJdk>
     <encoding>UTF-8</encoding>
   </properties>
+
   <profiles>
     <profile>
       <id>arcsde</id>
@@ -38,6 +41,7 @@
       </modules>
     </profile>
   </profiles>
+
   <repositories>
     <repository>
       <id>deegree-repo</id>
@@ -47,6 +51,7 @@
       </snapshots>
     </repository>
   </repositories>
+
   <build>
     <plugins>
       <plugin>
@@ -60,6 +65,7 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -341,6 +347,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <distributionManagement>
     <repository>
       <id>deegree-releases</id>
@@ -351,4 +358,5 @@
       <url>http://artefacts.deegree.org/libs-snapshots-local</url>
     </snapshotRepository>
   </distributionManagement>
+
 </project>

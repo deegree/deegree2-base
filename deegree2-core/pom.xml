@@ -151,6 +151,12 @@
     <dependency>
       <groupId>batik</groupId>
       <artifactId>batik-ext</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xmlParserAPIs</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>batik</groupId>
@@ -269,7 +275,6 @@
       <groupId>turbine</groupId>
       <artifactId>turbine</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.portals.jetspeed-1</groupId>
       <artifactId>j-portal</artifactId>
@@ -296,4 +301,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
 </project>
