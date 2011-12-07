@@ -49,6 +49,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -133,9 +134,12 @@ public class ApplicationHandler {
         } else {
             // handle HTTP POST which is assumed to be JSON encoded
             event = new JSONEvent( servletContext, request );
-            actionName = (String) event.getParameter().get( "className" );
-            if ( actionName == null ) {
-                actionName = (String) event.getParameter().get( "action" );
+            Map ps = event.getParameter();
+            if ( ps != null ) {
+                actionName = (String) ps.get( "className" );
+                if ( actionName == null ) {
+                    actionName = (String) ps.get( "action" );
+                }
             }
             ( (JSONEvent) event ).setBean( beans.get( actionName ) );
             LOG.logDebug( "HTTP POST/JSON action/class name: " + actionName );
