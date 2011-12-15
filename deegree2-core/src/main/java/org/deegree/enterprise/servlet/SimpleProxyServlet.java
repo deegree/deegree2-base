@@ -146,7 +146,8 @@ public class SimpleProxyServlet extends HttpServlet {
             if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
                 while ( ( read = is.read( buf ) ) > -1 ) {
                     os.write( buf, 0, read );
-                    LOG.logDebug( new String( buf, 0, read, con.getContentEncoding() ) );
+                    LOG.logDebug( new String( buf, 0, read, con.getContentEncoding() == null ? "UTF-8"
+                                                                                            : con.getContentEncoding() ) );
                 }
             } else {
                 while ( ( read = is.read( buf ) ) > -1 ) {
