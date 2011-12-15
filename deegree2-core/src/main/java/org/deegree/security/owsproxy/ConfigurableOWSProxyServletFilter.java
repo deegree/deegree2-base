@@ -47,10 +47,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -712,6 +714,25 @@ public class ConfigurableOWSProxyServletFilter implements Filter {
 
         public void setUser( User user ) {
             this.user = user;
+        }
+
+        @Override
+        public String getQueryString() {
+            StringBuilder sb = new StringBuilder();
+            for ( Entry<String, String[]> e : getParameterMap().entrySet() ) {
+                sb.append( e.getKey() );
+                sb.append( "=" );
+                for ( String s : e.getValue() ) {
+                    try {
+                        sb.append( URLEncoder.encode( s, "UTF-8" ) );
+                    } catch ( UnsupportedEncodingException e1 ) {
+                        // UTF8 is known
+                    }
+                }
+                sb.append( "&" );
+            }
+            sb.deleteCharAt( sb.length() - 1 );
+            return sb.toString();
         }
 
         @Override
