@@ -35,7 +35,9 @@
  ----------------------------------------------------------------------------*/
 package org.deegree.portal.standard.digitizer.control;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -54,13 +56,14 @@ import org.deegree.enterprise.control.ajax.ResponseHandler;
 import org.deegree.enterprise.control.ajax.WebEvent;
 import org.deegree.framework.log.ILogger;
 import org.deegree.framework.log.LoggerFactory;
+import org.deegree.framework.util.FileUtils;
+import org.deegree.framework.util.HttpUtils;
 import org.deegree.framework.util.TimeTools;
 import org.deegree.framework.xml.XMLFragment;
 import org.deegree.model.feature.Feature;
 import org.deegree.model.feature.FeatureCollection;
 import org.deegree.model.feature.FeatureFactory;
 import org.deegree.model.feature.FeatureProperty;
-import org.deegree.model.feature.GMLFeatureAdapter;
 import org.deegree.model.feature.schema.FeatureType;
 import org.deegree.model.feature.schema.PropertyType;
 import org.deegree.model.spatialschema.Geometry;
@@ -68,9 +71,9 @@ import org.deegree.model.spatialschema.GeometryException;
 import org.deegree.model.spatialschema.WKTAdapter;
 import org.deegree.ogcwebservices.wfs.XMLFactory;
 import org.deegree.ogcwebservices.wfs.operation.transaction.Insert;
+import org.deegree.ogcwebservices.wfs.operation.transaction.Insert.ID_GEN;
 import org.deegree.ogcwebservices.wfs.operation.transaction.Transaction;
 import org.deegree.ogcwebservices.wfs.operation.transaction.TransactionOperation;
-import org.deegree.ogcwebservices.wfs.operation.transaction.Insert.ID_GEN;
 import org.deegree.portal.Constants;
 import org.deegree.portal.context.ViewContext;
 
@@ -123,8 +126,6 @@ public class SaveFeatureListener extends AbstractListener {
             Feature feature = null;
             try {
                 feature = createFeature( attributes, geometry, featureType );
-                GMLFeatureAdapter ada = new GMLFeatureAdapter();
-                System.out.println( ada.export( feature ).getAsPrettyString() );
             } catch ( Exception e ) {
                 handleException( responseHandler, e );
                 return;
@@ -159,18 +160,25 @@ public class SaveFeatureListener extends AbstractListener {
 
         Transaction transaction = new Transaction( null, null, null, null, list, true, null );
         XMLFragment xml = XMLFactory.export( transaction );
-        /*
-         * // HttpUtils.addAuthenticationForXML( xml, appCont.getUser(), appCont.getPassword(), //
-         * appCont.getCertificate( wfsURL.toURI().toASCIIString() ) ); if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
-         * LOG.logDebug( "WFS Transaction: ", xml.getAsString() ); } InputStream is = HttpUtils.performHttpPost(
-         * wfsURL.toURI().toASCIIString(), xml, timeout, user, password, null ).getResponseBodyAsStream(); if (
-         * LOG.getLevel() == ILogger.LOG_DEBUG ) { String st = FileUtils.readTextFile( is ).toString(); is = new
-         * ByteArrayInputStream( st.getBytes() ); LOG.logDebug( "WFS transaction result: ", st ); } xml = new
-         * XMLFragment(); xml.load( is, wfsURL.toExternalForm() ); if ( "ExceptionReport".equalsIgnoreCase(
-         * xml.getRootElement().getLocalName() ) ) { LOG.logError( "Transaction on: " + xml.getAsString() + " failed" );
-         * // TODO // extract exception message throw new Exception( xml.getAsString() ); } return xml;
-         */
-        return null;
+        // HttpUtils.addAuthenticationForXML( xml, appCont.getUser(), appCont.getPassword(), //
+        // appCont.getCertificate( wfsURL.toURI().toASCIIString() ) );
+        if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
+            LOG.logDebug( "WFS Transaction: ", xml.getAsString() );
+        }
+        InputStream is = HttpUtils.performHttpPost( wfsURL.toURI().toASCIIString(), xml, timeout, user, password, null ).getResponseBodyAsStream();
+        if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
+            String st = FileUtils.readTextFile( is ).toString();
+            is = new ByteArrayInputStream( st.getBytes() );
+            LOG.logDebug( "WFS transaction result: ", st );
+        }
+        xml = new XMLFragment();
+        xml.load( is, wfsURL.toExternalForm() );
+        if ( "ExceptionReport".equalsIgnoreCase( xml.getRootElement().getLocalName() ) ) {
+            LOG.logError( "Transaction on: " + xml.getAsString() + " failed" );
+            // TODO // extract exception message
+            throw new Exception( xml.getAsString() );
+        }
+        return xml;
     }
 
     /**
@@ -196,6 +204,10 @@ public class SaveFeatureListener extends AbstractListener {
         for ( int i = 0; i < fps.length; i++ ) {
             if ( pts[i].getType() == Types.GEOMETRY ) {
                 fps[i] = FeatureFactory.createFeatureProperty( pts[i].getName(), geometry );
+                continue;
+            }
+            if ( attributes.get( pts[i].getName().getFormattedString() ) == null ) {
+                fps[i] = FeatureFactory.createFeatureProperty( pts[i].getName(), null );
                 continue;
             }
             String value = attributes.get( pts[i].getName().getFormattedString() ).toString();
@@ -241,7 +253,6 @@ public class SaveFeatureListener extends AbstractListener {
 
         List<PropertyType> propertyTypes = new ArrayList<PropertyType>();
         QualifiedName qn = new QualifiedName( geoPropName, URI.create( geoPropNamespace ) );
-        propertyTypes.add( FeatureFactory.createSimplePropertyType( qn, Types.GEOMETRY, false ) );
 
         List<Map<String, Object>> properties = (List<Map<String, Object>>) featureType.get( "properties" );
         for ( Map<String, Object> map : properties ) {
@@ -251,6 +262,7 @@ public class SaveFeatureListener extends AbstractListener {
             qn = new QualifiedName( name, nsp );
             propertyTypes.add( FeatureFactory.createSimplePropertyType( qn, type, false ) );
         }
+        propertyTypes.add( FeatureFactory.createSimplePropertyType( qn, Types.GEOMETRY, false ) );
         qn = new QualifiedName( featureTypeName, URI.create( featureTypeNamespace ) );
         return FeatureFactory.createFeatureType( qn, false,
                                                  propertyTypes.toArray( new PropertyType[propertyTypes.size()] ) );
