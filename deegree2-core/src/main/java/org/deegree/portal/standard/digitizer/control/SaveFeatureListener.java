@@ -252,7 +252,7 @@ public class SaveFeatureListener extends AbstractListener {
         String geoPropNamespace = (String) featureType.get( "geomPropertyNamespace" );
 
         List<PropertyType> propertyTypes = new ArrayList<PropertyType>();
-        QualifiedName qn = new QualifiedName( geoPropName, URI.create( geoPropNamespace ) );
+        QualifiedName qn = null;
 
         List<Map<String, Object>> properties = (List<Map<String, Object>>) featureType.get( "properties" );
         for ( Map<String, Object> map : properties ) {
@@ -262,6 +262,7 @@ public class SaveFeatureListener extends AbstractListener {
             qn = new QualifiedName( name, nsp );
             propertyTypes.add( FeatureFactory.createSimplePropertyType( qn, type, false ) );
         }
+        qn = new QualifiedName( geoPropName, URI.create( geoPropNamespace ) );
         propertyTypes.add( FeatureFactory.createSimplePropertyType( qn, Types.GEOMETRY, false ) );
         qn = new QualifiedName( featureTypeName, URI.create( featureTypeNamespace ) );
         return FeatureFactory.createFeatureType( qn, false,
