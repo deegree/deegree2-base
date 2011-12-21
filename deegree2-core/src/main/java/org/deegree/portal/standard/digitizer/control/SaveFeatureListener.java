@@ -93,7 +93,7 @@ public class SaveFeatureListener extends AbstractListener {
      * org.deegree.enterprise.control.ajax.AbstractListener#actionPerformed(org.deegree.enterprise.control.ajax.WebEvent
      * , org.deegree.enterprise.control.ajax.ResponseHandler)
      */
-    @SuppressWarnings("unchecked")
+    @Override
     public void actionPerformed( WebEvent event, ResponseHandler responseHandler )
                             throws IOException {
         HttpSession session = event.getSession();
@@ -153,33 +153,23 @@ public class SaveFeatureListener extends AbstractListener {
         }
     }
 
-    private XMLFragment performTransaction( URL wfsURL, List<TransactionOperation> list, String user, String password )
+    private static XMLFragment performTransaction( URL wfsURL, List<TransactionOperation> list, String user,
+                                                   String password )
                             throws Exception {
 
         Transaction transaction = new Transaction( null, null, null, null, list, true, null );
         XMLFragment xml = XMLFactory.export( transaction );
-/*
-        // HttpUtils.addAuthenticationForXML( xml, appCont.getUser(), appCont.getPassword(),
-        // appCont.getCertificate( wfsURL.toURI().toASCIIString() ) );
-        if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
-            LOG.logDebug( "WFS Transaction: ", xml.getAsString() );
-        }
-        InputStream is = HttpUtils.performHttpPost( wfsURL.toURI().toASCIIString(), xml, timeout, user, password, null ).getResponseBodyAsStream();
-        if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
-            String st = FileUtils.readTextFile( is ).toString();
-            is = new ByteArrayInputStream( st.getBytes() );
-            LOG.logDebug( "WFS transaction result: ", st );
-        }
-        xml = new XMLFragment();
-        xml.load( is, wfsURL.toExternalForm() );
-        if ( "ExceptionReport".equalsIgnoreCase( xml.getRootElement().getLocalName() ) ) {
-            LOG.logError( "Transaction on: " + xml.getAsString() + " failed" );
-            // TODO
-            // extract exception message
-            throw new Exception( xml.getAsString() );
-        }
-        return xml;
-*/
+        /*
+         * // HttpUtils.addAuthenticationForXML( xml, appCont.getUser(), appCont.getPassword(), //
+         * appCont.getCertificate( wfsURL.toURI().toASCIIString() ) ); if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
+         * LOG.logDebug( "WFS Transaction: ", xml.getAsString() ); } InputStream is = HttpUtils.performHttpPost(
+         * wfsURL.toURI().toASCIIString(), xml, timeout, user, password, null ).getResponseBodyAsStream(); if (
+         * LOG.getLevel() == ILogger.LOG_DEBUG ) { String st = FileUtils.readTextFile( is ).toString(); is = new
+         * ByteArrayInputStream( st.getBytes() ); LOG.logDebug( "WFS transaction result: ", st ); } xml = new
+         * XMLFragment(); xml.load( is, wfsURL.toExternalForm() ); if ( "ExceptionReport".equalsIgnoreCase(
+         * xml.getRootElement().getLocalName() ) ) { LOG.logError( "Transaction on: " + xml.getAsString() + " failed" );
+         * // TODO // extract exception message throw new Exception( xml.getAsString() ); } return xml;
+         */
         return null;
     }
 
@@ -188,9 +178,9 @@ public class SaveFeatureListener extends AbstractListener {
      * @return
      * @throws GeometryException
      */
-    private Geometry createGeometry( String wkt, ViewContext vc )
+    private static Geometry createGeometry( String wkt, ViewContext vc )
                             throws GeometryException {
-        return WKTAdapter.wrap( wkt, vc.getGeneral().getBoundingBox()[0].getCoordinateSystem() );        
+        return WKTAdapter.wrap( wkt, vc.getGeneral().getBoundingBox()[0].getCoordinateSystem() );
     }
 
     /**
@@ -199,17 +189,17 @@ public class SaveFeatureListener extends AbstractListener {
      * @param featureType
      * @return
      */
-    private Feature createFeature( Map<String, Object> attributes, Geometry geometry, FeatureType featureType ) {
+    private static Feature createFeature( Map<String, Object> attributes, Geometry geometry, FeatureType featureType ) {
 
         PropertyType[] pts = featureType.getProperties();
         FeatureProperty[] fps = new FeatureProperty[pts.length];
         for ( int i = 0; i < fps.length; i++ ) {
-            String value = (String) attributes.get( pts[i].getName().getFormattedString() );
-            switch ( pts[i].getType() ) {
-            case Types.GEOMETRY: {
+            if ( pts[i].getType() == Types.GEOMETRY ) {
                 fps[i] = FeatureFactory.createFeatureProperty( pts[i].getName(), geometry );
-                break;
+                continue;
             }
+            String value = attributes.get( pts[i].getName().getFormattedString() ).toString();
+            switch ( pts[i].getType() ) {
             case Types.VARCHAR: {
                 fps[i] = FeatureFactory.createFeatureProperty( pts[i].getName(), value );
                 break;
@@ -242,8 +232,7 @@ public class SaveFeatureListener extends AbstractListener {
         return FeatureFactory.createFeature( "UUID_" + UUID.randomUUID().toString(), featureType, fps );
     }
 
-    @SuppressWarnings("unchecked")
-    private FeatureType createFeatureType( Map<String, Object> featureType )
+    private static FeatureType createFeatureType( Map<String, Object> featureType )
                             throws UnknownTypeException {
         String featureTypeName = (String) featureType.get( "name" );
         String featureTypeNamespace = (String) featureType.get( "namespace" );

@@ -79,13 +79,7 @@ public class GetFeatureTypeListener extends AbstractListener {
 
     private static String baseRequest = "SERVICE=WFS&VERSION=1.1.0&REQUEST=DescribeFeatureType&TYPENAME=";
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deegree.enterprise.control.ajax.AbstractListener#actionPerformed(org.deegree.enterprise.control.ajax.WebEvent
-     * , org.deegree.enterprise.control.ajax.ResponseHandler)
-     */
+    @Override
     public void actionPerformed( WebEvent event, ResponseHandler responseHandler )
                             throws IOException {
         String layerName = (String) event.getParameter().get( "name" );
