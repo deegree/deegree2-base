@@ -84,6 +84,12 @@
     <dependency>
       <groupId>batik</groupId>
       <artifactId>batik-transcoder</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>fop</groupId>
+          <artifactId>fop</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.sun.media</groupId>
