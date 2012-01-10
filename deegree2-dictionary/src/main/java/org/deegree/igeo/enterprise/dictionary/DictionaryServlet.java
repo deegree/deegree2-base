@@ -35,9 +35,13 @@
  ----------------------------------------------------------------------------*/
 package org.deegree.igeo.enterprise.dictionary;
 
+import static org.deegree.ogcbase.CommonNamespaces.GMLNS;
+import static org.deegree.ogcbase.CommonNamespaces.GML_PREFIX;
+import static org.deegree.ogcbase.CommonNamespaces.XSINS;
+import static org.deegree.ogcbase.CommonNamespaces.XSI_PREFIX;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -49,12 +53,16 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.deegree.framework.log.ILogger;
 import org.deegree.framework.log.LoggerFactory;
@@ -76,6 +84,7 @@ import org.deegree.io.DBPoolException;
 public class DictionaryServlet extends HttpServlet {
 
     private static final long serialVersionUID = -6878316731046973766L;
+
     private static final ILogger LOG = LoggerFactory.getLogger( DictionaryServlet.class );
 
     private DictionaryResourceType dictRes;
@@ -132,76 +141,107 @@ public class DictionaryServlet extends HttpServlet {
         DBConnectionPool pool = DBConnectionPool.getInstance();
         JDBCConnectionType jdbc = dictRes.getConnection();
         Connection conn = null;
-        PrintWriter pw = null;
+
+        XMLStreamWriter writer = null;
         try {
-            pw = resp.getWriter();            
+            ServletOutputStream outputStream = resp.getOutputStream();
+            writer = XMLOutputFactory.newFactory().createXMLStreamWriter( outputStream );
+
             String cs = Charset.defaultCharset().displayName();
             resp.setCharacterEncoding( cs );
             resp.setContentType( "text/xml" );
             LOG.logDebug( "using charset: ", cs );
-            pw.write( "<?xml version=\"1.0\" encoding=\"" + cs + "\"?><gml:Dictionary gml:id=\"ExternalCodeLists\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base/gml.xsd\">" );
-            pw.write( "<gml:name codeSpace='" );
-            pw.write( codeSpace );
-            pw.write( "'>" );
-            pw.write( name );
-            pw.write( "</gml:name>" );
 
+            writeDictionaryStart( writer, cs );
+            writeName( name, codeSpace, writer );
             conn = pool.acquireConnection( jdbc.driver, jdbc.getUrl(), jdbc.getUser(), jdbc.getPassword() );
             if ( table != null ) {
-                handleTable( name, codeSpace, table, conn, pw );
+                handleTable( name, codeSpace, table, conn, writer, 0 );
             }
-
-            pw.write( "</gml:Dictionary>" );
-            pw.flush();
+            writer.writeEndElement();
+            writer.writeEndDocument();
+            writer.flush();
         } catch ( Exception e ) {
             e.printStackTrace();
+            try {
+                resp.sendError( 500, e.getMessage() );
+            } catch ( IOException e1 ) {
+                e1.printStackTrace();
+            }
         } finally {
             try {
                 pool.releaseConnection( conn, jdbc.driver, jdbc.getUrl(), jdbc.getUser(), jdbc.getPassword() );
+                if ( writer != null )
+                    writer.close();
             } catch ( DBPoolException e ) {
                 e.printStackTrace();
-            }      
-            pw.close();
+            } catch ( XMLStreamException e ) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void handleTable( String name, String codeSpace, String table, Connection conn, PrintWriter pw )
-                            throws SQLException {
+    private void handleTable( String name, String codeSpace, String table, Connection conn, XMLStreamWriter writer,
+                              int no )
+                            throws SQLException, XMLStreamException {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery( "select * from " + table );
         ResultSetMetaData rsmd = rs.getMetaData();
         int cnt = rsmd.getColumnCount();
 
-        pw.write( "<gml:dictionaryEntry>" );
-        pw.write( "<gml:DefinitionCollection gml:id='id_" + table + "'>" );
-        pw.write( "<gml:name codeSpace='" );
-        pw.write( codeSpace );
-        pw.write( "'>" );
-        pw.write( name );
-        pw.write( "</gml:name>" );
+        String gmlId = "id_" + no + "_" + table;
+
+        writer.writeStartElement( GML_PREFIX, "dictionaryEntry", GMLNS.toString() );
+        writer.writeStartElement( GML_PREFIX, "DefinitionCollection", GMLNS.toString() );
+        writer.writeAttribute( GML_PREFIX, GMLNS.toString(), "id", gmlId );
+
+        writeName( name, codeSpace, writer );
+
         int k = 0;
         while ( rs.next() ) {
-            pw.write( "<gml:dictionaryEntry>" );
-            pw.write( "<gml:Definition gml:id='id_" + table + "_" + k++ + "'>" );
+
+            writer.writeStartElement( GML_PREFIX, "dictionaryEntry", GMLNS.toString() );
+            writer.writeStartElement( GML_PREFIX, "Definition", GMLNS.toString() );
+            writer.writeAttribute( GML_PREFIX, GMLNS.toString(), "id", gmlId + "_" + k++ );
             for ( int i = 0; i < cnt; i++ ) {
-                pw.write( "<gml:name codeSpace='urn:org:deegree:igeodesktop:" );
-                pw.write( rsmd.getColumnName( i + 1 ).toLowerCase() );
-                pw.write( "'>" );
+                String codeSpace2 = "urn:org:deegree:igeodesktop:" + rsmd.getColumnName( i + 1 ).toLowerCase();
+
                 Object val = rs.getObject( i + 1 );
                 if ( val instanceof Date ) {
-                    pw.write( TimeTools.getISOFormattedTime( (Date) val ) );
+                    writeName( TimeTools.getISOFormattedTime( (Date) val ), codeSpace2, writer );
                 } else {
-                    pw.write( val.toString() );
+                    writeName( val.toString(), codeSpace2, writer );
                 }
-                pw.write( "</gml:name>" );
             }
-            pw.write( "</gml:Definition>" );
-            pw.write( "</gml:dictionaryEntry>" );
+            writer.writeEndElement();
+            writer.writeEndElement();
         }
         rs.close();
         stmt.close();
-        pw.write( "</gml:DefinitionCollection>" );
-        pw.write( "</gml:dictionaryEntry>" );
+
+        writer.writeEndElement();
+        writer.writeEndElement();
+    }
+
+    private void writeDictionaryStart( XMLStreamWriter writer, String cs )
+                            throws XMLStreamException {
+        writer.writeStartDocument( cs, "1.0" );
+        writer.writeStartElement( GML_PREFIX, "Dictionary", GMLNS.toString() );
+        writer.writeNamespace( GML_PREFIX, GMLNS.toString() );
+        writer.writeAttribute( GML_PREFIX, GMLNS.toString(), "id", "ExternalCodeLists" );
+        writer.writeNamespace( XSI_PREFIX, XSINS.toString() );
+        writer.writeAttribute( XSI_PREFIX, XSINS.toString(), "schemaLocation",
+                               GMLNS.toString() + " http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" );
+    }
+
+    private void writeName( String name, String codeSpace, XMLStreamWriter writer )
+                            throws XMLStreamException {
+        writer.writeStartElement( GML_PREFIX, "name", GMLNS.toString() );
+        if ( codeSpace != null && codeSpace.length() > 0 ) {
+            writer.writeAttribute( "codeSpace", codeSpace );
+        }
+        writer.writeCharacters( name );
+        writer.writeEndElement();
     }
 
     /**
@@ -212,31 +252,46 @@ public class DictionaryServlet extends HttpServlet {
         DBConnectionPool pool = DBConnectionPool.getInstance();
         JDBCConnectionType jdbc = dictRes.getConnection();
         Connection conn = null;
-        PrintWriter pw = null;
+
+        // PrintWriter pw = null;
+        XMLStreamWriter writer = null;
         try {
-            pw = resp.getWriter();
-            pw.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?><gml:Dictionary gml:id=\"ExternalCodeLists\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base/gml.xsd\">" );
-            pw.write( "<gml:name>deegree dictionary</gml:name>" );
+            ServletOutputStream outputStream = resp.getOutputStream();
+            writer = XMLOutputFactory.newFactory().createXMLStreamWriter( outputStream );
+            writeDictionaryStart( writer, Charset.defaultCharset().displayName() );
+            writeName( "deegree dictionary", null, writer );
+
             List<DefinitionType> defs = dictRes.getDefinition();
-            conn = pool.acquireConnection( jdbc.getDriver().trim(), jdbc.getUrl().trim(), jdbc.getUser().trim(), jdbc.getPassword().trim() );
+            conn = pool.acquireConnection( jdbc.getDriver().trim(), jdbc.getUrl().trim(), jdbc.getUser().trim(),
+                                           jdbc.getPassword().trim() );
+            int i = 0;
             for ( DefinitionType definitionType : defs ) {
                 String table = definitionType.getTable();
                 String name = definitionType.getName();
-                String codeSpace = definitionType.getCodeSpace();                
-                handleTable( name, codeSpace, table, conn, pw );
+                String codeSpace = definitionType.getCodeSpace();
+                handleTable( name, codeSpace, table, conn, writer, i++ );
             }
-            pw.write( "</gml:Dictionary>" );
-            pw.flush();
+            // pw.write( "</gml:Dictionary>" );
+            writer.writeEndElement();
+            writer.writeEndDocument();
+            writer.flush();
+            // pw.flush();
         } catch ( Exception e ) {
             e.printStackTrace();
         } finally {
             try {
                 pool.releaseConnection( conn, jdbc.getDriver(), jdbc.getUrl(), jdbc.getUser(), jdbc.getPassword() );
+                if ( writer != null ) {
+                    writer.close();
+                }
             } catch ( DBPoolException e ) {
                 e.printStackTrace();
-            }            
+            } catch ( XMLStreamException e ) {
+                e.printStackTrace();
+            }
         }
-        pw.close();
+        // pw.close();
+
     }
 
     @Override
