@@ -35,6 +35,8 @@
  ----------------------------------------------------------------------------*/
 package org.deegree.portal.standard.digitizer.control;
 
+import static java.util.Collections.singletonList;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,10 +68,13 @@ import org.deegree.model.feature.FeatureFactory;
 import org.deegree.model.feature.FeatureProperty;
 import org.deegree.model.feature.schema.FeatureType;
 import org.deegree.model.feature.schema.PropertyType;
+import org.deegree.model.filterencoding.FeatureFilter;
+import org.deegree.model.filterencoding.FeatureId;
 import org.deegree.model.spatialschema.Geometry;
 import org.deegree.model.spatialschema.GeometryException;
 import org.deegree.model.spatialschema.WKTAdapter;
 import org.deegree.ogcwebservices.wfs.XMLFactory;
+import org.deegree.ogcwebservices.wfs.operation.transaction.Delete;
 import org.deegree.ogcwebservices.wfs.operation.transaction.Insert;
 import org.deegree.ogcwebservices.wfs.operation.transaction.Insert.ID_GEN;
 import org.deegree.ogcwebservices.wfs.operation.transaction.Transaction;
@@ -137,6 +142,9 @@ public class SaveFeatureListener extends AbstractListener {
             if ( "INSERT".equalsIgnoreCase( (String) attributes.get( "$ACTION$" ) ) ) {
                 handleInsert( responseHandler, url, fc );
             }
+            if ( "DELETE".equalsIgnoreCase( (String) attributes.get( "$ACTION$" ) ) ) {
+                handleDelete( responseHandler, url, fc );
+            }
         }
 
     }
@@ -146,6 +154,22 @@ public class SaveFeatureListener extends AbstractListener {
         Insert insert = new Insert( UUID.randomUUID().toString(), ID_GEN.GENERATE_NEW, null, fc );
         List<TransactionOperation> tmp = new ArrayList<TransactionOperation>();
         tmp.add( insert );
+        try {
+            performTransaction( url, tmp, null, null );
+        } catch ( Exception e ) {
+            handleException( responseHandler, e );
+            return;
+        }
+    }
+
+    private void handleDelete( ResponseHandler responseHandler, URL url, FeatureCollection fc )
+                            throws IOException {
+        FeatureId id = new FeatureId( fc.getFeature( 0 ).getId() );
+        ArrayList<FeatureId> fids = new ArrayList<FeatureId>( singletonList( id ) );
+        Delete delete = new Delete( UUID.randomUUID().toString(), fc.getFeature( 0 ).getFeatureType().getName(),
+                                    new FeatureFilter( fids ) );
+        List<TransactionOperation> tmp = new ArrayList<TransactionOperation>();
+        tmp.add( delete );
         try {
             performTransaction( url, tmp, null, null );
         } catch ( Exception e ) {
