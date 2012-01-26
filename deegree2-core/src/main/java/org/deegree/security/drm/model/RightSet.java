@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.security.drm.model;
 
 import java.util.ArrayList;
@@ -44,13 +44,12 @@ import org.deegree.model.feature.Feature;
 import org.deegree.security.GeneralSecurityException;
 
 /**
- * A <code>RightSet</code> encapsulates a number of <code>Right</code> objects. This are grouped
- * by the <code>SecurableObject</code> for which they apply to support an efficient implementation
- * of the merge()-operation. The merge()-operation results in a <code>RightSet</code> that
- * contains the logical rights of boths sets, but only one <code>Right</code> object of each
- * <code>RightType</code> (and <code>SecurableObject</code>). This is accomplished by merging
- * the constraints of the <code>Rights</code> of the same type (and object).
- *
+ * A <code>RightSet</code> encapsulates a number of <code>Right</code> objects. This are grouped by the
+ * <code>SecurableObject</code> for which they apply to support an efficient implementation of the merge()-operation.
+ * The merge()-operation results in a <code>RightSet</code> that contains the logical rights of boths sets, but only one
+ * <code>Right</code> object of each <code>RightType</code> (and <code>SecurableObject</code>). This is accomplished by
+ * merging the constraints of the <code>Rights</code> of the same type (and object).
+ * 
  * @author <a href="mailto:mschneider@lat-lon.de">Markus Schneider </a>
  * @version $Revision$
  */
@@ -60,6 +59,8 @@ public class RightSet {
     // are Maps (keys are RightTypes, values are Rights)
     private Map<SecurableObject, Map<RightType, Right>> secObjects = new HashMap<SecurableObject, Map<RightType, Right>>();
 
+    private boolean isEmpty;
+
     RightSet() {
     }
 
@@ -67,6 +68,7 @@ public class RightSet {
      * @param rights
      */
     public RightSet( Right[] rights ) {
+        this.isEmpty = rights == null || rights.length == 0;
         for ( int i = 0; i < rights.length; i++ ) {
             Map<RightType, Right> rightMap = secObjects.get( rights[i].getSecurableObject() );
             if ( rightMap == null ) {
@@ -77,11 +79,14 @@ public class RightSet {
         }
     }
 
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+
     /**
-     * Checks if the <code>RightSet</code> contains the permissions for a
-     * <code>SecurableObject</code> and a concrete situation (the situation is represented by the
-     * given <code>Feature</code>).
-     *
+     * Checks if the <code>RightSet</code> contains the permissions for a <code>SecurableObject</code> and a concrete
+     * situation (the situation is represented by the given <code>Feature</code>).
+     * 
      * @param object
      * @param type
      * @param situation
@@ -102,9 +107,9 @@ public class RightSet {
     }
 
     /**
-     * Checks if the <code>RightSet</code> contains the (unrestricted) permissions for a
-     * <code>SecurableObject</code> and a certain type of right.
-     *
+     * Checks if the <code>RightSet</code> contains the (unrestricted) permissions for a <code>SecurableObject</code>
+     * and a certain type of right.
+     * 
      * @param object
      * @param type
      * @return true, if the right applies
@@ -125,8 +130,8 @@ public class RightSet {
     /**
      * @param secObject
      * @param type
-     * @return the <code>Right</code> of the specified <code>RightType</code> that this
-     * <code>RightSet</code> defines on the specified <code>SecurableObject</code>.
+     * @return the <code>Right</code> of the specified <code>RightType</code> that this <code>RightSet</code> defines on
+     *         the specified <code>SecurableObject</code>.
      */
     public Right getRight( SecurableObject secObject, RightType type ) {
         Right right = null;
@@ -138,8 +143,7 @@ public class RightSet {
 
     /**
      * @param secObject
-     * @return the encapulated <code>Rights</code> (for one <code>SecurableObject</code>) as an
-     * one-dimensional array.
+     * @return the encapulated <code>Rights</code> (for one <code>SecurableObject</code>) as an one-dimensional array.
      */
     public Right[] toArray( SecurableObject secObject ) {
         Right[] rights = new Right[0];
@@ -152,10 +156,10 @@ public class RightSet {
 
     /**
      * @return the encapulated <code>Rights</code> as a two-dimensional array:
-     * <ul>
-     * <li>first index: runs the different <code>SecurableObjects</code>
-     * <li>second index: runs the different <code>Rights</code>
-     * </ul>
+     *         <ul>
+     *         <li>first index: runs the different <code>SecurableObjects</code>
+     *         <li>second index: runs the different <code>Rights</code>
+     *         </ul>
      */
     public Right[][] toArray2() {
         ArrayList<Right[]> secObjectList = new ArrayList<Right[]>();
@@ -170,7 +174,7 @@ public class RightSet {
 
     /**
      * Produces the logical disjunction of two <code>RightSets</code>.
-     *
+     * 
      * @param that
      * @return the new right set
      */

@@ -83,6 +83,7 @@ import org.deegree.security.GeneralSecurityException;
 import org.deegree.security.UnauthorizedException;
 import org.deegree.security.drm.SecurityAccess;
 import org.deegree.security.drm.SecurityAccessManager;
+import org.deegree.security.drm.model.RightSet;
 import org.deegree.security.drm.model.SecuredObject;
 import org.deegree.security.drm.model.User;
 import org.deegree.security.owsproxy.Condition;
@@ -485,8 +486,7 @@ public class GetCapabilitiesResponseValidator extends ResponseValidator {
         } catch ( Exception e ) {
             LOG.logError( e.getMessage(), e );
             throw new InvalidParameterValueException(
-                                                      Messages.format(
-                                                                       "GetCapabilitiesResponseValidator.INVALIDWFSCAPA",
+                                                      Messages.format( "GetCapabilitiesResponseValidator.INVALIDWFSCAPA",
                                                                        e.getMessage() ) );
         }
 
@@ -625,7 +625,8 @@ public class GetCapabilitiesResponseValidator extends ResponseValidator {
                 } catch ( Exception e ) {
                     LOG.logDebug( "Lookup failed? ", e.getLocalizedMessage() );
                 }
-                if ( secObj == null || user.getRights( access, secObj, GETMAP ) == null ) {
+                RightSet rights = user.getRights( access, secObj, GETMAP );
+                if ( secObj == null || rights == null ) {
                     // remove the layer from the capabilities if it's not known
                     // by the DRM registry or if the user doesn't have a GetMap
                     // right on it

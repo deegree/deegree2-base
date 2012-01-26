@@ -3025,7 +3025,6 @@ public final class SQLRegistry implements SecurityRegistry {
         }
     }
 
-
     public void setServiceRight( SecurityTransaction transaction, Service service, Role role, RightType right )
                             throws GeneralSecurityException {
         PreparedStatement pstmt = null;
@@ -3074,6 +3073,59 @@ public final class SQLRegistry implements SecurityRegistry {
             closeResultSet( rs );
             closeStatement( pstmt );
             releaseLocalConnection( access, conn );
+        }
+    }
+
+    public String getConstraints( SecurityAccess access, Role role, Service service )
+                            throws GeneralSecurityException {
+        Connection conn = acquireLocalConnection( access );
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement( "SELECT constraints FROM SEC_JT_ROLES_CONSTRAINTS WHERE FK_ROLES = ? AND FK_SERVICES = ?" );
+            pstmt.setInt( 1, role.getID() );
+            pstmt.setInt( 2, service.getId() );
+            rs = pstmt.executeQuery();
+            if ( rs.next() ) {
+                return rs.getString( 1 );
+            }
+            return null;
+        } catch ( SQLException e ) {
+            LOG.logError( e.getMessage(), e );
+            throw new GeneralSecurityException( "SQLRegistry.getConstraints() failed. Error message: " + e.getMessage() );
+        } finally {
+            closeResultSet( rs );
+            closeStatement( pstmt );
+            releaseLocalConnection( access, conn );
+        }
+    }
+
+    public void setConstraints( SecurityTransaction transaction, Service service, Role role, String constraints )
+                            throws GeneralSecurityException {
+        PreparedStatement pstmt = null;
+
+        try {
+            pstmt = transactionalConnection.prepareStatement( "DELETE FROM SEC_JT_ROLES_CONSTRAINTS WHERE FK_ROLES=? AND FK_SERVICES=?" );
+            pstmt.setInt( 1, role.getID() );
+            pstmt.setInt( 2, service.getId() );
+            pstmt.executeUpdate();
+            pstmt.close();
+
+            if ( constraints != null ) {
+                pstmt = transactionalConnection.prepareStatement( "INSERT INTO SEC_JT_ROLES_CONSTRAINTS (FK_ROLES, FK_SERVICES, CONSTRAINTS) VALUES (?,?,?)" );
+                pstmt.setInt( 1, role.getID() );
+                pstmt.setInt( 2, service.getId() );
+                pstmt.setString( 3, constraints );
+                pstmt.executeUpdate();
+                pstmt.close();
+            }
+        } catch ( SQLException e ) {
+            LOG.logError( e.getMessage(), e );
+            closeStatement( pstmt );
+            abortTransaction( transaction );
+            throw new GeneralSecurityException( "SQLRegistry.setRights() failed. Rollback performed. "
+                                                + "Error message: " + e.getMessage() );
         }
     }
 }

@@ -486,4 +486,8 @@ public class SecurityAccess {
         return registry.hasServiceRight( this, service, role, right );
     }
 
+    public String getConstraints( Role role, Service service )
+                            throws GeneralSecurityException {
+        return registry.getConstraints( this, role, service );
+    }
 }

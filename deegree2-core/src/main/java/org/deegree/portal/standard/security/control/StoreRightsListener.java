@@ -121,10 +121,12 @@ public class StoreRightsListener extends AbstractListener {
 
             int serviceId = -1;
             boolean sldAllowed = false;
+            String constraints = null;
             if ( !oldMode ) {
                 try {
                     serviceId = Integer.parseInt( (String) params[4].getValue() );
                     sldAllowed = Boolean.parseBoolean( (String) params[5].getValue() );
+                    constraints = (String) params[6].getValue();
                 } catch ( Throwable e ) {
                     // ignore params
                 }
@@ -167,6 +169,7 @@ public class StoreRightsListener extends AbstractListener {
                 Service service = transaction.getServiceById( serviceId );
                 RightType right = transaction.getRightByName( "SLD" );
                 transaction.setServiceRight( service, role, sldAllowed ? right : null );
+                transaction.setConstraints( service, role, constraints );
             }
 
             // set/delete access rights for Layers
@@ -413,7 +416,7 @@ public class StoreRightsListener extends AbstractListener {
         // FIXME this is a workaround !!!
         // originaly, params.length needed to be exactly 3. (thus the error message)
         // now, pdfplot client uses an RPC with a params.length of 4.
-        if ( params.length != 3 && params.length != 4 && params.length != 6 ) {
+        if ( params.length != 3 && params.length != 4 && params.length != 7 ) {
             throw new RPCException( Messages.getMessage( "IGEO_STD_SEC_WRONG_PARAMS_NUM", "3" ) );
         }
         // if ( params.length != 3 ) {

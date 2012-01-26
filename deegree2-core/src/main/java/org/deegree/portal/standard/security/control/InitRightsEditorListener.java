@@ -138,10 +138,14 @@ public class InitRightsEditorListener extends AbstractListener {
                 LinkedList<Service> services = access.getAllServices();
                 request.setAttribute( "SERVICES", services );
                 Map<Service, Boolean> serviceRights = new HashMap<Service, Boolean>();
+                Map<Service, String> constraints = new HashMap<Service, String>();
                 for ( Service service : services ) {
                     serviceRights.put( service, access.hasServiceRight( service, role, right ) );
+                    String cstr = access.getConstraints( role, service );
+                    constraints.put( service, cstr == null ? "{maxWidth: 0, maxHeight: 0}" : cstr );
                 }
                 request.setAttribute( "SERVICES_RIGHTS", serviceRights );
+                request.setAttribute( "CONSTRAINTS", constraints );
             }
 
             SecuredObject[] layers = access.getAllSecuredObjects( ClientHelper.TYPE_LAYER );
@@ -172,7 +176,7 @@ public class InitRightsEditorListener extends AbstractListener {
             for ( int i = 0; i < layers.length; i++ ) {
                 Right right = role.getRights( access, layers[i] ).getRight( layers[i], RightType.GETFEATUREINFO );
                 boolean isAccessible = right != null;
-                Map constraintsMap = new HashMap();
+                Map<String, String[]> constraintsMap = new HashMap<String, String[]>();
                 if ( right != null && right.getConstraints() != null ) {
                     constraintsMap = buildConstraintsMap( right.getConstraints() );
                 }
@@ -319,4 +323,5 @@ public class InitRightsEditorListener extends AbstractListener {
         }
         map.put( constraintName.getAsString(), parameters );
     }
+
 }

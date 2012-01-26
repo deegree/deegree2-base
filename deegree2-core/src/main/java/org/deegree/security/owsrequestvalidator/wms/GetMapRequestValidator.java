@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.security.owsrequestvalidator.wms;
 
 import static org.deegree.security.drm.model.RightType.GETMAP;
@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.deegree.datatypes.QualifiedName;
 import org.deegree.datatypes.Types;
@@ -70,6 +72,10 @@ import org.deegree.ogcwebservices.InvalidParameterValueException;
 import org.deegree.ogcwebservices.OGCWebServiceRequest;
 import org.deegree.ogcwebservices.wms.operation.GetMap;
 import org.deegree.security.UnauthorizedException;
+import org.deegree.security.drm.SecurityAccess;
+import org.deegree.security.drm.SecurityAccessManager;
+import org.deegree.security.drm.model.Role;
+import org.deegree.security.drm.model.Service;
 import org.deegree.security.drm.model.User;
 import org.deegree.security.owsproxy.Condition;
 import org.deegree.security.owsproxy.OperationParameter;
@@ -80,9 +86,9 @@ import org.deegree.security.owsrequestvalidator.Policy;
 /**
  * @author <a href="mailto:poth@lat-lon.de">Andreas Poth </a>
  * @author last edited by: $Author$
- *
+ * 
  * @version 1.1, $Revision$, $Date$
- *
+ * 
  * @since 1.1
  */
 
@@ -145,7 +151,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
 
     /**
      * validates the incoming GetMap request against the policy assigned to a validator
-     *
+     * 
      * @param request
      *            request to validate
      * @param user
@@ -194,7 +200,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
     /**
      * checks if the passed envelope is valid against the maximum bounding box defined in the policy. If
      * <tt>user</ff> != <tt>null</tt> the maximu valid BBOX will be read from the user/rights repository
-     *
+     * 
      * @param condition
      *            condition containing the definition of the valid BBOX
      * @param envelope
@@ -233,7 +239,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
     /**
      * checks if the passed layres/styles are valid against the layers/styles list defined in the policy. If
      * <tt>user</ff> != <tt>null</tt> the valid layers/styles will be read from the user/rights repository
-     *
+     * 
      * @param condition
      *            condition containing the definition of the valid layers/styles
      * @param layers
@@ -283,7 +289,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
     /**
      * checks if the passed bgcolor is valid against the bgcolor(s) defined in the policy. If
      * <tt>user</ff> != <tt>null</tt> the valid bgcolors will be read from the user/rights repository
-     *
+     * 
      * @param condition
      *            condition containing the definition of the valid bgcolors
      * @param bgcolor
@@ -313,7 +319,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
     /**
      * checks if the passed transparency is valid against the transparency defined in the policy. If
      * <tt>user</ff> != <tt>null</tt> the valid transparency will be read from the user/rights repository
-     *
+     * 
      * @param condition
      *            condition containing the definition of the valid transparency
      * @param transparency
@@ -343,7 +349,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
     /**
      * checks if the requested map area/size is valid against the minimum resolution defined in the policy. If
      * <tt>user</ff> != <tt>null</tt> the valid resolution will be read from the user/rights repository
-     *
+     * 
      * @param condition
      *            condition containing the definition of the valid resolution
      * @throws InvalidParameterValueException
@@ -377,7 +383,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
     /**
      * checks if the passed reference to a SLD document is valid against the defined in the policy. If
      * <tt>user</ff> != <tt>null</tt> the valid sld reference addresses will be read from the user/rights repository
-     *
+     * 
      * @param condition
      *            condition containing the definition of the valid sldRef
      * @param sldRef
@@ -468,7 +474,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
 
     /**
      * checks if the passed user is allowed to perform a GetMap request containing a SLD_BODY parameter.
-     *
+     * 
      * @param condition
      *            condition containing when SLD_BODY is valid or nots
      * @param sld_body
@@ -476,7 +482,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
     private void validateSLD_Body( Condition condition, StyledLayerDescriptor sld_body ) {
 
         /*
-         *
+         * 
          * OperationParameter op = condition.getOperationParameter( SLD_BODY ); // version is valid because no
          * restrictions are made if ( sld_body == null ||op.isAny() ) return; // at the moment it is just evaluated if
          * the user is allowed // to perform a SLD request or not. no content validation will // be made boolean
@@ -487,7 +493,7 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
 
     /**
      * validates the passed WMS GetMap request against a User- and Rights-Management DB.
-     *
+     * 
      * @param wmsreq
      * @param user
      * @throws InvalidParameterValueException
@@ -555,6 +561,41 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
                 handleUserCoupledRules( user, feature,
                                         "[" + securityConfig.getProxiedUrl() + "]:" + layers[i].getName(), "Layer",
                                         GETMAP );
+                // handle custom constraints (currently only maxwidth/height)
+                try {
+                    SecurityAccessManager sam = SecurityAccessManager.getInstance();
+                    SecurityAccess access = sam.acquireAccess( user );
+                    Service service = access.getServiceByAddress( securityConfig.getProxiedUrl() );
+                    boolean authorized = false;
+                    for ( Role r : user.getRoles( access ) ) {
+                        String constr = access.getConstraints( r, service );
+                        if ( constr == null ) {
+                            authorized = true;
+                            break;
+                        }
+                        Pattern p = Pattern.compile( "maxWidth: ([0-9]+), maxHeight: ([0-9]+)" );
+                        Matcher m = p.matcher( constr );
+                        if ( m.find() ) {
+                            int width = Integer.valueOf( m.group( 1 ) );
+                            int height = Integer.valueOf( m.group( 2 ) );
+                            if ( width == 0 && height == 0 ) {
+                                authorized = true;
+                                break;
+                            }
+                            if ( width >= wmsreq.getWidth() && height >= wmsreq.getHeight() ) {
+                                authorized = true;
+                                break;
+                            }
+                        }
+                    }
+                    if ( !authorized ) {
+                        throw new UnauthorizedException( Messages.getString( "RequestValidator.UNAUTORIZEDACCESS" ) );
+                    }
+                } catch ( UnauthorizedException e ) {
+                    throw e;
+                } catch ( Throwable e ) {
+                    throw new UnauthorizedException( e );
+                }
             }
         }
 
@@ -562,10 +603,10 @@ public class GetMapRequestValidator extends AbstractWMSRequestValidator {
 
     /**
      * calculates the map scale as defined in the OGC WMS 1.1.1 specifications
-     *
+     * 
      * @return scale of the map
      */
-    private double calcScale( GetMap request )
+    private static double calcScale( GetMap request )
                             throws Exception {
 
         Envelope bbox = request.getBoundingBox();

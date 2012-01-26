@@ -843,4 +843,9 @@ public class SecurityTransaction extends SecurityAccess {
         registry.setServiceRight( this, service, role, right );
     }
 
+    public void setConstraints( Service service, Role role, String constraints )
+                            throws GeneralSecurityException {
+        getInstance().verify( this );
+        registry.setConstraints( this, service, role, constraints );
+    }
 }

@@ -898,4 +898,9 @@ public interface SecurityRegistry {
     boolean hasServiceRight( SecurityAccess access, Service service, Role role, RightType right )
                             throws GeneralSecurityException;
 
+    String getConstraints( SecurityAccess access, Role role, Service service )
+                            throws GeneralSecurityException;
+
+    void setConstraints( SecurityTransaction transaction, Service service, Role role, String constraints )
+                            throws GeneralSecurityException;
 }
