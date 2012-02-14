@@ -504,7 +504,22 @@ public class StyleFactory {
      * @return the external graphic
      */
     public static ExternalGraphic createExternalGraphic( java.net.URL url, String format ) {
-        return new ExternalGraphic( format, url );
+        return createExternalGraphic( url, format, null );
+    }
+
+    /**
+     * wrapper for stylefactory method
+     * 
+     * @param url
+     *            the url of the image
+     * @param format
+     *            mime type of the image
+     * @param title
+     *            the title of the externalGraphic
+     * @return the external graphic
+     */
+    public static ExternalGraphic createExternalGraphic( java.net.URL url, String format, String title ) {
+        return new ExternalGraphic( format, url, title );
     }
 
     /**

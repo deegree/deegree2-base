@@ -95,6 +95,8 @@ public class ExternalGraphic implements Marshallable {
 
     private URL onlineResource = null;
 
+    private String title;
+
     private TranscoderInput input = null;
 
     private ByteArrayOutputStream bos = null;
@@ -117,8 +119,21 @@ public class ExternalGraphic implements Marshallable {
      * @param onlineResource
      */
     ExternalGraphic( String format, URL onlineResource ) {
+        this( format, onlineResource, null );
+    }
+
+    /**
+     * Creates a new ExternalGraphic_Impl object.
+     * 
+     * @param format
+     * @param onlineResource
+     * @param title
+     *            the title of the online resource, may be <code>null</code>
+     */
+    ExternalGraphic( String format, URL onlineResource, String title ) {
         setFormat( format );
         setOnlineResource( onlineResource );
+        setTitle( title );
     }
 
     /**
@@ -129,6 +144,16 @@ public class ExternalGraphic implements Marshallable {
      */
     public String getFormat() {
         return format;
+    }
+
+    /**
+     * the title of th online resource
+     * 
+     * @return Format of the external graphic
+     * 
+     */
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -150,6 +175,17 @@ public class ExternalGraphic implements Marshallable {
      */
     public URL getOnlineResource() {
         return onlineResource;
+    }
+
+    /**
+     * sets the title of the online resource
+     * 
+     * @param format
+     *            Format of the external graphic
+     * 
+     */
+    public void setTitle( String title ) {
+        this.title = title;
     }
 
     /**
@@ -333,6 +369,9 @@ public class ExternalGraphic implements Marshallable {
         StringBuffer sb = new StringBuffer( 200 );
         sb.append( "<ExternalGraphic>" );
         sb.append( "<OnlineResource xmlns:xlink='http://www.w3.org/1999/xlink' " );
+        if ( title != null ) {
+            sb.append( "xlink:title='" ).append( title ).append( "' " );
+        }
         sb.append( "xlink:type='simple' xlink:href='" );
         try {
             sb.append( onlineResource.toURI().toASCIIString() + "'/>" );
