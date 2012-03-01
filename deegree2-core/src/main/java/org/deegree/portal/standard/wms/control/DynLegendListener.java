@@ -370,23 +370,23 @@ public class DynLegendListener extends AbstractMapListener {
                 try {
                     map.put( "ID", UUID.randomUUID().toString() );
                     gm = GetMap.create( map );
-                    // must be recreated because GetMap.create( map ) removes all parameters from 
+                    // must be recreated because GetMap.create( map ) removes all parameters from
                     // passed map
                     map = toMap( request );
-                } catch ( Exception e ) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append( st.nextToken() ).append( '?' );
+                    Map<String, String> vp = gm.getVendorSpecificParameters();
+                    Iterator<String> iter = vp.keySet().iterator();
+                    while ( iter.hasNext() ) {
+                        String key = iter.next();
+                        sb.append( key ).append( "=" ).append( vp.get( key ) ).append( '&' );
+                    }
+                    LOG.logDebug( "base URL = ", sb );
+                    map.put( "URL", sb.toString() );
+                    list.add( map );
+                } catch ( Throwable e ) {
                     e.printStackTrace();
                 }
-                StringBuilder sb = new StringBuilder();
-                sb.append( st.nextToken() ).append( '?' );
-                Map<String, String> vp = gm.getVendorSpecificParameters();
-                Iterator<String> iter = vp.keySet().iterator();
-                while ( iter.hasNext() ) {
-                    String key = (String) iter.next();
-                    sb.append( key ).append( "=" ).append( vp.get( key ) ).append( '&' );
-                }
-                LOG.logDebug( "base URL = ", sb );
-                map.put( "URL", sb.toString() );
-                list.add( map );
             }
         }
         HashMap<String, String>[] getMR = new HashMap[list.size()];
@@ -469,10 +469,8 @@ public class DynLegendListener extends AbstractMapListener {
      * @param vc
      *            Current layer list
      * @return A HashMap holding the legend symbols as read from the cash
-     * @throws IOException
      */
-    private Map<String, Object> readLegendSymbols( GetLegendGraphic glr, HashMap<String, String>[] model, ViewContext vc )
-                            throws IOException {
+    private Map<String, Object> readLegendSymbols( GetLegendGraphic glr, HashMap<String, String>[] model, ViewContext vc ) {
 
         ArrayList<String> list1 = new ArrayList<String>();
         ArrayList<BufferedImage> list2 = new ArrayList<BufferedImage>();
@@ -489,7 +487,7 @@ public class DynLegendListener extends AbstractMapListener {
         int lgHeight = 0;
         for ( int i = 0; i < model.length; i++ ) {
             if ( model[i].get( "LAYERS" ) != null ) {
-                String style = (String) model[i].get( "STYLES" );
+                String style = model[i].get( "STYLES" );
                 String[] styles = new String[100];
                 if ( style != null ) {
                     style = StringTools.replace( style, ",,", ",default,", true );
@@ -504,12 +502,12 @@ public class DynLegendListener extends AbstractMapListener {
 
                 // read capabilities for current service (URL) or - if avalable -
                 // read it from the cache
-                String addr = (String) model[i].get( "URL" );
+                String addr = model[i].get( "URL" );
                 if ( wmscache.get( addr ) == null ) {
                     if ( LOG.getLevel() == ILogger.LOG_DEBUG ) {
                         LOG.logDebug( StringTools.concat( 200, "Adding the caps of ", addr, " to the hash map" ) );
                     }
-                    wmscache.put( addr, getCapabilities( addr, (String) model[i].get( "VERSION" ) ) );
+                    wmscache.put( addr, getCapabilities( addr, model[i].get( "VERSION" ) ) );
                 } else {
                     LOG.logDebug( "read capabilities from cache" );
 
@@ -517,7 +515,7 @@ public class DynLegendListener extends AbstractMapListener {
                 LOG.logDebug( "caps ", addr );
                 WMSCapabilities capa = (WMSCapabilities) wmscache.get( addr );
 
-                st = new StringTokenizer( (String) model[i].get( "LAYERS" ), "," );
+                st = new StringTokenizer( model[i].get( "LAYERS" ), "," );
                 int k = 0;
                 while ( st.hasMoreTokens() ) {
                     if ( styles == null || styles.length == 0 || styles[k] == null || styles[k].equals( "" ) ) {
@@ -575,7 +573,7 @@ public class DynLegendListener extends AbstractMapListener {
                         // second attempt to get legend image: necessary if layer has been added dynamically.
                         if ( legendGraphic == null ) {
                             LOG.logDebug( "SECOND ATTEMPT for the legend image, because layer was not in WMC LayerList" );
-                            legendGraphic = createLegendSybmbol( (WMSCapabilities) wmscache.get( addr ), layer, style );
+                            legendGraphic = createLegendSymbol( (WMSCapabilities) wmscache.get( addr ), layer, style );
                         }
 
                         // store legend in cache
@@ -618,7 +616,7 @@ public class DynLegendListener extends AbstractMapListener {
      * @param style
      * @return the legend image or the missingImage
      */
-    private BufferedImage createLegendSybmbol( WMSCapabilities wmsCapa, String layer, String style ) {
+    private BufferedImage createLegendSymbol( WMSCapabilities wmsCapa, String layer, String style ) {
 
         URL url = null;
         org.deegree.ogcwebservices.wms.capabilities.Layer ogcLayer = wmsCapa.getLayer( layer );
@@ -679,13 +677,12 @@ public class DynLegendListener extends AbstractMapListener {
 
         if ( url == null ) {
             return createMissingLegend( ogcLayer.getTitle() );
-        } else {
-            try {
-                return ImageUtils.loadImage( url );
-            } catch ( Exception e ) {
-                LOG.logError( e.getLocalizedMessage() );
-                return createMissingLegend( ogcLayer.getTitle() );
-            }
+        }
+        try {
+            return ImageUtils.loadImage( url );
+        } catch ( Throwable e ) {
+            LOG.logError( e.getLocalizedMessage() );
+            return createMissingLegend( ogcLayer.getTitle() );
         }
     }
 
@@ -741,7 +738,7 @@ public class DynLegendListener extends AbstractMapListener {
             sb.append( "&" );
         }
         if ( url.toUpperCase().indexOf( "SERVICE=WMS" ) > -1 ) {
-            // this is extremely stupid but 
+            // this is extremely stupid but
             // a) there are some WMS that use SERVICE=WMS as a vendor specific parameter
             // b) other WMS (ArcGIS) does not accept the same parameter twice in a GetCapabilties request
             sb.append( "request=GetCapabilities&version=" );
@@ -749,7 +746,7 @@ public class DynLegendListener extends AbstractMapListener {
             sb.append( "request=GetCapabilities&service=WMS&version=" );
         }
         sb.append( version );
-System.out.println(sb);
+
         if ( userNames.get( url ) != null ) {
             sb.append( "&USER=" ).append( userNames.get( url ) );
             sb.append( "&PASSWORD=" );
