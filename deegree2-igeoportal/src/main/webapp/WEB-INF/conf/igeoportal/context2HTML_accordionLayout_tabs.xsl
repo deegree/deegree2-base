@@ -26,7 +26,7 @@
     <xsl:variable name="vNorthHeight">30</xsl:variable>   
     <xsl:variable name="vSouthHeight">32</xsl:variable>
     <xsl:variable name="vWestWidth">300</xsl:variable>
-    <xsl:variable name="vEastWidth">250</xsl:variable>
+    <xsl:variable name="vEastWidth">300</xsl:variable>
     <xsl:variable name="vVerticalAdjustment">165</xsl:variable>
     <xsl:variable name="vHorizontalAdjustment">560</xsl:variable>
     <!-- ==================================================================== -->
