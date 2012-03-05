@@ -291,7 +291,7 @@
 		            dataUrl: (baseURL + '?action=getTreeData'),
 		            autoScroll: false,
 		            border: false,
-		            width: 250,
+		            width: 300,
 		            ddScroll: false,
 		            tbar : [ { icon : '../../images/png/add_layergroup.png', 
 		            	       tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_ADDNODE" ) %>',	            	       
