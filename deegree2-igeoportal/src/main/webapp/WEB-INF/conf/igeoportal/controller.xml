@@ -35,37 +35,37 @@
     	<!-- settings for security component. not needed, if download shall be used without user rights management. -->
         <!-- 
         <parameter>
-    		<name>driver</name>
-    		<value>org.postgresql.Driver</value>
-    	</parameter>
-    	<parameter>
-    		<name>url</name>
-            <value>jdbc:postgresql://localhost:5432/your_users_rights_security_db</value>
-    	</parameter>
-    	<parameter>
-    		<name>user</name>
-    		<value>postgres</value>
-    	</parameter>
-    	<parameter>
-    		<name>password</name>
-    		<value></value>
-    	</parameter>
+            <name>driver</name>
+            <value>org.postgresql.Driver</value>
+        </parameter>
+        <parameter>
+            <name>url</name>
+            <value>jdbc:postgresql://localhost:5432/ndsml_rop_sec</value>
+        </parameter>
+        <parameter>
+            <name>user</name>
+            <value>postgres</value>
+        </parameter>
+        <parameter>
+            <name>password</name>
+            <value></value>
+        </parameter>
         -->
         <!-- optional parameter to choose between different download formats. if ommitted, "SHP" will be used. 
              Supported formats are: SHP, GML. multiple formats are separated with a colon (SHP,GML) -->
-        <!--
+       
         <parameter>
             <name>DOWNLOAD_FORMAT</name>
             <value>SHP,GML</value>
         </parameter>
-        -->
+        
     </event>
     <event name="mapView:downloadFeatures" class="org.deegree.portal.standard.context.control.DownloadListener" next="message.jsp" alternativeNext="container.jsp">
         <!-- DEFAULT_MAX_FEATURES is used as default value for WFS/DefaultMaxFeatures. This value is used, if a WFS does 
              not provide this info in its capabilities. If not specified here, then the default value is 0. -->
         <parameter>
             <name>DEFAULT_MAX_FEATURES</name>
-            <value>10</value>
+            <value>10000</value>
         </parameter>
         <!-- If TEST_MAX_HITS is true, then a featuretype is not provided for download, when the number of requested 
              features exceeds the number of features a WFS is able to provide. Default value is false. -->        
@@ -78,11 +78,11 @@
     <event name="mapView:pdfprint" class="org.deegree.portal.standard.wms.control.SimplePrintListener" next="modules/pdfprint/printresult.jsp" alternativeNext="modules/pdfprint/printresult.jsp">
         <parameter>
             <name>WIDTH</name>
-            <value>500</value>
+            <value>1499</value>
         </parameter>
         <parameter>
             <name>HEIGHT</name>
-            <value>500</value>
+            <value>1499</value>
         </parameter>
         <parameter>
             <name>LEGENDWIDTH</name>
@@ -96,19 +96,24 @@
             <name>TEMPDIR</name>
             <value>print</value>
         </parameter>
+      <!-- optional parameter; defaults to: "WEB-INF/igeoportal/print" -->
+        <parameter>
+            <name>TEMPLATE_DIR</name>
+            <value>WEB-INF/conf/igeoportal/printtemplates</value>
+        </parameter>
+        <!-- defines the spacing between the layertrees entries -->
         <parameter>
             <name>SPACING</name>
             <value>10</value>
         </parameter>
-        <parameter>
-			<!-- optional parameter; defaults to: "WEB-INF/igeoportal/print" -->
-            <name>TEMPLATE_DIR</name>
-            <value>WEB-INF/conf/igeoportal/printtemplates</value>
+         <parameter>
+            <name>ScaleBoundaries</name>
+            <value>100, 250, 500, 1000, 2500, 5000, 10000, 15000, 25000, 50000, 100000, 200000, 250000, 500000, 1000000, 2500000, 5000000, 10000000, 50000000</value>
         </parameter>
     </event>
     <!-- event for dynamic legend generation. comment in, if needed -->    
     <event name="mapClient:drawLegend" class="org.deegree.portal.standard.wms.control.DynLegendListener" next="./modules/legend/legend_dyn.jsp" alternativeNext="container.jsp">
-        <parameter>
+       <parameter>
             <name>leftMargin</name>
             <value>0</value>
         </parameter>
@@ -126,11 +131,11 @@
         </parameter>
         <parameter>
             <name>useLayerTitle</name>
-            <value>true</value>
+            <value>false</value>
         </parameter>
         <parameter>
             <name>maxNNLegendSize</name>
-            <value>150</value>
+            <value>50</value>
         </parameter>
         <parameter>
             <name>separator</name>
@@ -140,14 +145,13 @@
             <name>missingImage</name>
             <value>images/missingLegend.gif</value>
         </parameter>
-        <!-- 
         <parameter>
-            <!-!- for iGeoSecurity only: list of servers which need to be accessed through an owsproxy to get a LegendGraphic -!->
+            <!-- for iGeoSecurity only: list of servers which need to be accessed through an owsproxy to get a LegendGraphic -->
             <name>users</name>
-            <!-!- the value *must* be adjusted to your system -!->
-            <value>http://demo.deegree.org/deegree-wms/services;username;password|http://deegree.org/owsproxy/proxy;username;password</value>
+            <!-- the value *must* be adjusted to your system -->
+            <value>http://localhost:8080/wms/services;default;default|http://localhost:8080/owsproxy/proxy;default;default</value>
         </parameter>
-         -->
+        
     </event>
     
     <!-- event name="mapView:switchScaleBarValue" class="org.deegree.portal.standard.wms.control.ScaleBarSwitcherListener" next="scalebarswitcherproxy.jsp"/ -->

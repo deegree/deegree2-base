@@ -161,4 +161,5 @@
      -->
      <event name="getMessages"
         class="org.deegree.portal.common.control.GetMessagesListener" />
+     
 </controller>

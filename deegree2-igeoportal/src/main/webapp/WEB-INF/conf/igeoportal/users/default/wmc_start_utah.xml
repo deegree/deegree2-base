@@ -6,8 +6,8 @@
     <General>
         <!-- specifies the map size and must correspond to the module MapView definded further below.
         The <BoundingBox ...> sets the used CRS and the initial extend (used for button View full extent)
-        BBox must have the same proportion as the <Window ...> settings. -->
-        <Window width="649" height="425"/>
+        BBox must have the same p%roportion as the <Window ...> settings. -->
+        <Window width="1499" height="1499"/>
     <BoundingBox SRS="EPSG:26912" minx="191911" miny="4083417" maxx="720950" maxy="4664939"/>
         <Title>.:. Utah .:. deegree iGeoPortal</Title>
         <KeywordList>
@@ -43,25 +43,25 @@
                 <deegree:TempDirectory>
                     <deegree:Name>../../../../../tmp</deegree:Name>
                     <deegree:Access>
-                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/igeoportal-std"/>
+                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/deegree2-igeoportal-2.6-pre1-SNAPSHOT"/>
                     </deegree:Access>
                 </deegree:TempDirectory>
                 <deegree:DownloadDirectory>
                     <deegree:Name>../../../../../downloads</deegree:Name>
                     <deegree:Access>
-                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/igeoportal-std" />
+                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/deegree2-igeoportal-2.6-pre1-SNAPSHOT" />
                     </deegree:Access>
                 </deegree:DownloadDirectory>
                 <deegree:SLDDirectory>
                     <deegree:Name>../../../../../</deegree:Name>
                     <deegree:Access>
-                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/igeoportal-std"/>
+                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/deegree2-igeoportal-2.6-pre1-SNAPSHOT"/>
                     </deegree:Access>
                 </deegree:SLDDirectory>
                 <deegree:PrintDirectory>
                     <deegree:Name>../../../../../print</deegree:Name>
                     <deegree:Access>
-                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/igeoportal-std/print"/>
+                        <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/deegree2-igeoportal-2.6-pre1-SNAPSHOT-2.6-pre1-SNAPSHOT/print"/>
                     </deegree:Access>
                 </deegree:PrintDirectory>
             </deegree:IOSettings>
@@ -77,38 +77,36 @@
                 <deegree:Header>header.jsp</deegree:Header>
                 <deegree:Footer>footer.jsp</deegree:Footer>
                 -->
-                <deegree:CommonJS>
-                    <deegree:Name>./javascript/model/layerlist.js</deegree:Name>
-                    <deegree:Name>./javascript/model/layergroup.js</deegree:Name>
-                    <deegree:Name>./javascript/gui/pushbutton.js</deegree:Name>
-                    <deegree:Name>./modules/recentertolayer/recentertolayer.js</deegree:Name>
-                    <deegree:Name>./javascript/gui/togglebutton.js</deegree:Name>
-                    <deegree:Name>./javascript/model/wmsrequestfactory.js</deegree:Name>
-                    <deegree:Name>./javascript/envelope.js</deegree:Name>
-                    <deegree:Name>./javascript/event.js</deegree:Name>
-                    <deegree:Name>./javascript/exception.js</deegree:Name>
-                    <deegree:Name>./javascript/feature.js</deegree:Name>
-                    <deegree:Name>./javascript/geometries.js</deegree:Name>
-                    <deegree:Name>./javascript/geometryfactory.js</deegree:Name>
-                    <deegree:Name>./javascript/geometryutils.js</deegree:Name>
-                    <deegree:Name>./javascript/geotransform.js</deegree:Name>
-                    <deegree:Name>./javascript/json2.js</deegree:Name>
-                    <deegree:Name>./javascript/layerutils.js</deegree:Name>
-                    <deegree:Name>./javascript/rpc.js</deegree:Name>
-                    <deegree:Name>./javascript/rendering.js</deegree:Name>
-                    <deegree:Name>./javascript/request_handler.js</deegree:Name>
-                    <deegree:Name>./javascript/utils.js</deegree:Name>
-                    <deegree:Name>./javascript/wktadapter.js</deegree:Name>         
-                    <!-- <deegree:Name>http://openlayers.org/dev/OpenLayers.js</deegree:Name> -->
-                    <deegree:Name>./javascript/openlayers/lib/OpenLayers.js</deegree:Name>
-                </deegree:CommonJS>
+                 <deegree:CommonJS>
+          <deegree:Name>./javascript/model/layerlist.js</deegree:Name>
+          <deegree:Name>./javascript/model/layergroup.js</deegree:Name>
+          <deegree:Name>./javascript/gui/pushbutton.js</deegree:Name>
+          <deegree:Name>./modules/recentertolayer/recentertolayer.js</deegree:Name>
+          <deegree:Name>./javascript/gui/togglebutton.js</deegree:Name>
+          <deegree:Name>./javascript/model/wmsrequestfactory.js</deegree:Name>
+          <deegree:Name>./javascript/envelope.js</deegree:Name>
+          <deegree:Name>./javascript/event.js</deegree:Name>
+          <deegree:Name>./javascript/exception.js</deegree:Name>
+          <deegree:Name>./javascript/feature.js</deegree:Name>
+          <deegree:Name>./javascript/geometries.js</deegree:Name>
+          <deegree:Name>./javascript/geometryfactory.js</deegree:Name>
+          <deegree:Name>./javascript/geometryutils.js</deegree:Name>
+          <deegree:Name>./javascript/geotransform.js</deegree:Name>
+          <deegree:Name>./javascript/json2.js</deegree:Name>
+          <deegree:Name>./javascript/layerutils.js</deegree:Name>
+          <deegree:Name>./javascript/rpc.js</deegree:Name>
+          <deegree:Name>./javascript/request_handler.js</deegree:Name>
+          <deegree:Name>./javascript/utils.js</deegree:Name>
+          <deegree:Name>./javascript/wktadapter.js</deegree:Name>
+          <deegree:Name>./javascript/openlayers/OpenLayers.js</deegree:Name>
+        </deegree:CommonJS>
                 <!-- NORTH -->
                 <deegree:North hidden="false">
                 </deegree:North>
                 <!-- WEST -->
                 <deegree:West hidden="false" width="300">
                     
-					<deegree:Module hidden="false" type="content" width="350" height="600" header="false" top="42" left="510" scrolling="auto">
+					<deegree:Module hidden="false" type="content" width="350" height="100%" header="false" top="42" left="510" scrolling="auto">
 					    <deegree:Name>Routing</deegree:Name>
 					    <deegree:Content>./modules/routing/routing.jsp</deegree:Content>
 					    <deegree:ModuleJS>./modules/routing/javascript/routing.js</deegree:ModuleJS>
@@ -117,7 +115,7 @@
 					    <deegree:ModuleJS>./modules/routing/javascript/actionhandler.js</deegree:ModuleJS>
 					</deegree:Module>
                     
-                    <deegree:Module hidden="false" type="content" width="350" height="600" header="false" top="42" left="510" scrolling="auto">
+                    <deegree:Module hidden="false" type="content" width="350" height="100%" header="false" top="42" left="510" scrolling="auto">
                         <deegree:Name>Digitizer</deegree:Name>
                         <deegree:Content>./modules/digitizer/digitizer.jsp</deegree:Content>
                         <deegree:ModuleJS>./modules/digitizer/digitizer.js</deegree:ModuleJS>
@@ -129,7 +127,7 @@
                         <deegree:ModuleJS>./modules/wmpsprint/wmpsprint.js</deegree:ModuleJS>
                     </deegree:Module>
  -->                    
-                    <deegree:Module hidden="false" type="content" width="300" height="200">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%">
                         <deegree:Name>ContextSwitcher</deegree:Name>
                         <deegree:Title>Switch context</deegree:Title>
                         <deegree:Content>./modules/wmc/contextswitcher.html</deegree:Content>
@@ -153,19 +151,19 @@
                             </deegree:Parameter>
                         </deegree:ParameterList>
                     </deegree:Module>
-                    <deegree:Module hidden="false" type="content" width="300" height="400" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%" scrolling="no">
                         <deegree:Name>Measurement</deegree:Name>
                         <deegree:Title>Measurement</deegree:Title>
                         <deegree:Content>./modules/measurement/measurement.jsp</deegree:Content>
                         <deegree:ModuleJS>./modules/measurement/measurement.js</deegree:ModuleJS>
                         <deegree:ModuleJS>./javascript/wktadapter.js</deegree:ModuleJS>
                     </deegree:Module>
-                    <deegree:Module hidden="false" type="content" width="300" height="400" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%" scrolling="no">
                         <deegree:ModuleConfiguration>
                             <OnlineResource xlink:type="simple" xlink:href="../../modules/gazetteer.xml"/>
                         </deegree:ModuleConfiguration>
                     </deegree:Module>
-                    <deegree:Module hidden="false" type="content" width="300" height="400" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%" scrolling="no">
                         <deegree:ModuleConfiguration>
                             <OnlineResource xlink:type="simple" xlink:href="../../modules/scaleswitcher.xml"/>
                         </deegree:ModuleConfiguration>
@@ -202,12 +200,12 @@
                         </deegree:ModuleConfiguration>
                     </deegree:Module>
                      -->
-                    <deegree:Module hidden="false" type="content" width="250" height="670" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="250" height="100%" scrolling="no">
                         <deegree:ModuleConfiguration>
                             <OnlineResource xlink:type="simple" xlink:href="../../modules/overview.xml"/>
                         </deegree:ModuleConfiguration> 
                     </deegree:Module>
-                    <deegree:Module hidden="false" type="content" width="250" height="250" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="250" height="100%" scrolling="no">
                         <deegree:Name>Timeselect</deegree:Name>
                         <deegree:Title>Timeselect</deegree:Title>
                         <deegree:Content>./modules/timeselect/timeselect_mw.jsp</deegree:Content>
@@ -216,12 +214,12 @@
                 </deegree:East>
                 <!-- CENTER -->
                 <deegree:Center hidden="false">
-                    <deegree:Module hidden="false" type="toolbar" width="1700" height="35">
+                    <deegree:Module hidden="false" type="toolbar" width="1750" height="35">
                         <deegree:ModuleConfiguration>
                             <OnlineResource xlink:type="simple" xlink:href="../../modules/toolbar.xml"/>
                         </deegree:ModuleConfiguration> 
                     </deegree:Module>
-                    <deegree:Module hidden="false" type="content" width="1700" height="1550" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="50%" height="50%" scrolling="no">
                         <deegree:Name>OLMap</deegree:Name>
                         <deegree:Content>./modules/olmap/olmap.jsp</deegree:Content>
                         <deegree:ModuleJS>./modules/olmap/olmap.js</deegree:ModuleJS>

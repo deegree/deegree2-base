@@ -24,7 +24,7 @@
         <xsl:value-of select="./cntxt:ViewContext/cntxt:General/cntxt:BoundingBox/@SRS"/>
     </xsl:variable>    
     <xsl:variable name="vNorthHeight">30</xsl:variable>   
-    <xsl:variable name="vSouthHeight">0</xsl:variable>
+    <xsl:variable name="vSouthHeight">32</xsl:variable>
     <xsl:variable name="vWestWidth">310</xsl:variable>
     <xsl:variable name="vEastWidth">250</xsl:variable>
     <xsl:variable name="vVerticalAdjustment">165</xsl:variable>
