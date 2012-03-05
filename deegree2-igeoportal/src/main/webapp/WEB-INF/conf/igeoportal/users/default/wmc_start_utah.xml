@@ -106,7 +106,7 @@
                 <!-- WEST -->
                 <deegree:West hidden="false" width="300">
                     
-					<deegree:Module hidden="false" type="content" width="350" height="100%" header="false" top="42" left="510" scrolling="auto">
+					<deegree:Module hidden="false" type="content" width="300" height="100%" header="false" top="42" left="510" scrolling="auto">
 					    <deegree:Name>Routing</deegree:Name>
 					    <deegree:Content>./modules/routing/routing.jsp</deegree:Content>
 					    <deegree:ModuleJS>./modules/routing/javascript/routing.js</deegree:ModuleJS>
@@ -115,7 +115,7 @@
 					    <deegree:ModuleJS>./modules/routing/javascript/actionhandler.js</deegree:ModuleJS>
 					</deegree:Module>
                     
-                    <deegree:Module hidden="false" type="content" width="350" height="100%" header="false" top="42" left="510" scrolling="auto">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%" header="false" top="42" left="510" scrolling="auto">
                         <deegree:Name>Digitizer</deegree:Name>
                         <deegree:Content>./modules/digitizer/digitizer.jsp</deegree:Content>
                         <deegree:ModuleJS>./modules/digitizer/digitizer.js</deegree:ModuleJS>
@@ -186,8 +186,8 @@
                     </deegree:Module>
                 </deegree:South>
                 <!-- East -->
-                <deegree:East width="250" hidden="false" overlay="false">
-                    <deegree:Module hidden="false" type="content" width="250" height="100%" scrolling="auto">
+                <deegree:East width="300" hidden="false" overlay="false">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%" scrolling="auto">
                         <deegree:Name>LayerTree</deegree:Name>
                         <deegree:Title>Layertree</deegree:Title>
                         <deegree:Content>./modules/layertree/layertree.jsp</deegree:Content>
@@ -200,12 +200,12 @@
                         </deegree:ModuleConfiguration>
                     </deegree:Module>
                      -->
-                    <deegree:Module hidden="false" type="content" width="250" height="100%" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%" scrolling="no">
                         <deegree:ModuleConfiguration>
                             <OnlineResource xlink:type="simple" xlink:href="../../modules/overview.xml"/>
                         </deegree:ModuleConfiguration> 
                     </deegree:Module>
-                    <deegree:Module hidden="false" type="content" width="250" height="100%" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="300" height="100%" scrolling="no">
                         <deegree:Name>Timeselect</deegree:Name>
                         <deegree:Title>Timeselect</deegree:Title>
                         <deegree:Content>./modules/timeselect/timeselect_mw.jsp</deegree:Content>
@@ -219,7 +219,7 @@
                             <OnlineResource xlink:type="simple" xlink:href="../../modules/toolbar.xml"/>
                         </deegree:ModuleConfiguration> 
                     </deegree:Module>
-                    <deegree:Module hidden="false" type="content" width="50%" height="50%" scrolling="no">
+                    <deegree:Module hidden="false" type="content" width="100%" height="100%" scrolling="no">
                         <deegree:Name>OLMap</deegree:Name>
                         <deegree:Content>./modules/olmap/olmap.jsp</deegree:Content>
                         <deegree:ModuleJS>./modules/olmap/olmap.js</deegree:ModuleJS>
