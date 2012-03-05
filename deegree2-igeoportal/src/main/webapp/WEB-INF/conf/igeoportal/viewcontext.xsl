@@ -10,10 +10,9 @@
 			<!--[if lt IE 7.]>
 		      <script defer type="text/javascript" src="./javascript/pngfix.js"></script>
 		    <![endif]-->	
-			<link rel="stylesheet" type="text/css" href="./javascript/ext-3.3.1/resources/css/ext-all.css" />			<link rel="stylesheet" type="text/css" title="blue" href="./javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 		    <link rel="stylesheet" type="text/css" title="gray" href="./javascript/ext-3.3.1/resources/css/xtheme-gray.css" />		    <link rel="stylesheet" type="text/css" title="black" href="./javascript/ext-3.3.1/resources/css/xtheme-access.css" />		    <link rel="stylesheet" type="text/css" title="wpt" href="./css/wpt/ext-3.3.1/css/ext-all.css" />		    <link rel="stylesheet" type="text/css" title="nds" href="./css/nds/NDS/ext-all.css" />		    		
+			<link rel="stylesheet" type="text/css" href="./javascript/ext-3.3.1/resources/css/ext-all.css" />			<link rel="stylesheet" type="text/css" title="blue" href="./javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 		    <link rel="stylesheet" type="text/css" title="gray" href="./javascript/ext-3.3.1/resources/css/xtheme-gray.css" />		    <link rel="stylesheet" type="text/css" title="black" href="./javascript/ext-3.3.1/resources/css/xtheme-access.css" />		   
 			<script type="text/javascript" src="./javascript/ext-3.3.1/adapter/ext/ext-base.js"></script>
-			<script type="text/javascript" src="./javascript/ext-3.3.1/ext-all.js"></script>									
-			<link rel="stylesheet" type="text/css">
+			<script type="text/javascript" src="./javascript/ext-3.3.1/ext-all-debug.js"></script>            <script type="text/javascript" src="./javascript/jquery/jquery-1.7.1.min.js"></script>			<link rel="stylesheet" type="text/css">
 				<xsl:attribute name="href"><xsl:value-of select="./cntxt:General/cntxt:Extension/deegree:Frontend/deegree:Style"/></xsl:attribute>
 			</link>
 	
@@ -21,10 +20,8 @@
 			<xsl:apply-templates select="./cntxt:General/cntxt:Extension/deegree:Frontend/deegree:*/deegree:Module/deegree:ModuleJS"/>
 						<script type="text/javascript" src="./javascript/history.js"></script>
 			<script type="text/javascript" src="./javascript/rpc.js"></script>
-			<script type="text/javascript" src="./javascript/state/zoomin.js"></script>
 			<script type="text/javascript" src="./javascript/state/zoomout.js"></script>
-			<script type="text/javascript" src="./javascript/state/featureinfo.js"></script>
-			<script type="text/javascript" src="./javascript/state/recenter.js"></script>
+            <script type="text/javascript" src="./javascript/state/featureinfo.js"></script>			<script type="text/javascript" src="./javascript/state/recenter.js"></script>
 			
 			<script language="JavaScript">						var controller = null;			
 			var repository = new Array();
@@ -65,19 +62,13 @@
 				this.setMapSize = setMapSize;
 				this.getFeatureTypes = getFeatureTypes;
 				this.setMode = setMode;				this.getFrame = getFrame;				this.openDataTableWindow = openDataTableWindow;
+                function checkControl(className, ctrlMode, mode) {                    var map = window.controller.vOLMap.map                    var list = map.getControlsByClass(className)                    for(var i = 0; i &lt; list.length; ++i) {                        if(mode === ctrlMode) {                          list[i].activate()                        } else {                          list[i].deactivate()                        }                    }                }
 
-
-                function setMode(mode) {
-                    if ( mode == 'zoomin' ) {
-                        this.mode = new Zoomin();
-                    } else if ( mode == 'zoomout' ) {
-                        this.mode = new Zoomout();
-                    } else if ( mode == 'recenter' ) {
+                function setMode(mode) {                    this.mode = null                    checkControl('OpenLayers.Control.DragPan', 'move', mode)                    checkControl('OpenLayers.Control.ZoomBox', 'zoomin', mode)//                    checkControl('OpenLayers.Control.ZoomOut', 'zoomout', mode)                    if ( mode === 'recenter' ) {
                         this.mode = new Recenter();
-                    } else if ( mode == 'featureinfo' ) {
+                    } else if ( mode === 'featureinfo' ) {
                         this.mode = new FeatureInfo();
-                    }
-                }                                function getFrame(name) {	                for ( var i = 0; i &lt; window.frames.length; i++ ) {	                    if ( window.frames[i].name == name ) {	                        return frames[i];	                    }	                }   	                return null;                }                                /**                * open window for displaying passed data table. If window is already opened, passed table                * will be added within a new tab                */                function openDataTableWindow(name, columns, data) {                    				    if ( this.dataWindow == null ) {				        this.dataWindowTabs = new Ext.TabPanel({				            id: 'TABS',				            activeTab: 0,				            frame:true,				            enableTabScroll: true,				            width: columns.length*110,				            autoScroll:true, 				            items: [] 				        });   				        				        this.dataWindow = new Ext.Window({				            title: 'Functions',				            closeAction: 'hide',				            closable: true,				            animCollapse: false,				            plain: true,				            x: 50,				            y: 150,				            width: 600,				            height: 400,				            margins: '0 5 0 5',				            layout:'border',				            items :  [{				                        border: false,				                        region: 'center',				                        autoScroll:true,				                        items: [this.dataWindowTabs]				                      }]				        });				    } 				    				     var header = new Array();				     for (var i = 0; i &lt; columns.length; i++) {				         header.push( {				             header: columns[i],				             dataIndex: columns[i],				             editor: new Ext.form.TextField({					                   allowBlank: false					                })									             				         } );				     }				     var store = new Ext.data.ArrayStore({				         autoDestroy: true,				         idIndex: 0,  				         data: data,				         fields: columns				     });								     var listView = new Ext.grid.EditorGridPanel({				         store: store,				         title: name,				         autoHeight: true,				         columns: header				     });								     this.dataWindowTabs.add( listView );				     this.dataWindowTabs.activate( this.dataWindowTabs.getComponent( 0 ) );				    				     this.dataWindow.show( this );   				}				                
+                    } else if ( mode === 'zoomout' ) {                        this.mode = new Zoomout()                    }                }                                function getFrame(name) {	                for ( var i = 0; i &lt; window.frames.length; i++ ) {	                    if ( window.frames[i].name == name ) {	                        return frames[i];	                    }	                }   	                return null;                }                                /**                * open window for displaying passed data table. If window is already opened, passed table                * will be added within a new tab                */                function openDataTableWindow(name, columns, data) {                    				    if ( this.dataWindow == null ) {				        this.dataWindowTabs = new Ext.TabPanel({				            id: 'TABS',				            activeTab: 0,				            frame:true,				            enableTabScroll: true,				            width: columns.length*110,				            autoScroll:true, 				            items: [] 				        });   				        				        this.dataWindow = new Ext.Window({				            title: 'Sachinformationen',				            closeAction: 'hide',				            closable: true,				            animCollapse: false,				            plain: true,				            x: 50,				            y: 230,				            width: 600,				            height: 400,				            margins: '0 5 0 5',				            layout:'border',				            items :  [{				                        border: false,				                        region: 'center',				                        autoScroll:true,				                        items: [this.dataWindowTabs]				                      }]				        });				    } 				    				     var header = new Array();				     for (var i = 0; i &lt; columns.length; i++) {				         header.push( {				             header: columns[i],				             dataIndex: columns[i],				             editor: new Ext.form.TextField({					                   allowBlank: false					                })									             				         } );				     }				     var store = new Ext.data.ArrayStore({				         autoDestroy: true,				         idIndex: 0,  				         data: data,				         fields: columns				     });								     var listView = new Ext.grid.EditorGridPanel({				         store: store,				         title: name,				         autoHeight: true,				         columns: header				     });								     this.dataWindowTabs.add( listView );				     this.dataWindowTabs.activate( this.dataWindowTabs.getComponent( 0 ) );				    				     this.dataWindow.show( this );   				}				                
 				
 				function replace(page) {
 					window.location.replace(page);
@@ -306,8 +297,7 @@
 					</xsl:for-each>
 				}			
 				
-				function repaint() {
-					// update with current map size
+				function repaint() {					// update with current map size
 					var envelope = this.mapModel.getBoundingBox();
 					this.gtrans = new GeoTransform( envelope.minx, envelope.miny, envelope.maxx,
 													envelope.maxy, 0, 0, this.mapModel.getWidth()-1,
@@ -321,8 +311,7 @@
 								}
 							</xsl:if>
 						</xsl:if>
-					</xsl:for-each>
-				}
+					</xsl:for-each>				}
 	
 				<!-- declare a variable and an initMethod for each module that is not of type 'menu' and not of type 'space'-->
 				<xsl:for-each select="./cntxt:General/cntxt:Extension/deegree:Frontend/deegree:*/deegree:Module">
@@ -334,13 +323,11 @@
 					</xsl:if>
 				</xsl:for-each>
 				
-				function init() {
-					this.initMapModel();
+				function init() {					this.initMapModel();
 					this.history.init( this.mapModel.getBoundingBox() );
 					<xsl:for-each select="./cntxt:General/cntxt:Extension/deegree:Frontend/deegree:*/deegree:Module">
 						addObjectToRepository( 'SRC:' + '<xsl:value-of select="./deegree:Name"/>', '<xsl:value-of select="./deegree:Content"/>' );
-					</xsl:for-each>
-				}
+					</xsl:for-each>				}
 	
 				<!-- implement initMethod for each module that is of type 'content' or 'toolbar'-->
 				<xsl:for-each select="./cntxt:General/cntxt:Extension/deegree:Frontend/deegree:*/deegree:Module">
@@ -539,8 +526,7 @@
 													0, 0, this.mapModel.getWidth()-1, this.mapModel.getHeight()-1 );
 				}
 			}
-		
-			</script>
+					</script>
 		</head>
 		        <body onload="init_iGeo(); setActiveStyleSheet('blue')">            <div id="menubar"/>            <div id="legendWindowContent" style="display:none"/>        </body>    
 	</html>

@@ -32,94 +32,59 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 
-function History( controller, maxSteps ) {
+function History(controller, maxSteps) {
 
-	// variable declaration
-	this.controller = controller;
-	this.maxSteps = 0;		 // TODO: implement maxSteps
+    // variable declaration
+    this.controller = controller;
+    this.maxSteps = 0; // TODO: implement maxSteps
 
-	this.message1 = "It is not possible to move to the previous map, because you are at the initial map."
-	this.message2 = "It is not possible to move to the next map, because you are at the final map."
+    this.message1 = "It is not possible to move to the previous map, because you are at the initial map."
+    this.message2 = "It is not possible to move to the next map, because you are at the final map."
 
-	this.historyList = null; // contains the map envelopes
-	this.previous = null;	 // points to the envelope that is one step back.
-	this.current = null;	 // points to the current envelope as seen in map.
-	this.next = null;		 // points to the envelope that is one step beyond.
+    // method declaration
+    this.init = init;
+    this.addEnvelope = addEnvelope;
+    this.moveBack = moveBack;
+    this.moveForward = moveForward;
 
-	// method declaration
-	this.init = init;
-	this.addEnvelope = addEnvelope;
-	this.moveBack = moveBack;
-	this.moveForward = moveForward;
+    // method implementation
 
-	// method implementation
+    /*
+     * this method is called when the portal is loaded, in Controller.init(), in viewcontext.xml
+     */
+    function init(initialEnvelope) {
+        // obsolete, using OpenLayers history control
+    }
 
-	/*
-	 * this method is called when the portal is loaded, in Controller.init(), in viewcontext.xml
-	 */
-	function init( initialEnvelope ) {
-		this.previous = -1;
-		this.current = 0;
-		this.next = 1;
-		this.historyList = new Array();
-		this.historyList[this.current] = initialEnvelope;
-	}
+    /*
+     * this method is called when following events occur:
+     * 
+     * PAN (use hand icon to move map) BOX (mode = zoomin, zoomout, recenter) BBOX (use mouse to open new bbox) MOVE
+     * (use arrows to navigate)
+     */
+    function addEnvelope(envelope) {
+        // obsolete, using OpenLayers history control
+    }
 
-	/*
-	 * this method is called when following events occur:
-	 *
-	 * PAN (use hand icon to move map)
-	 * BOX (mode = zoomin, zoomout, recenter)
-	 * BBOX (use mouse to open new bbox)
-	 * MOVE (use arrows to navigate)
-	 */
-	function addEnvelope( envelope ) {
-		var tempList = new Array();
-		for ( var i = 0; i <= this.next; i++ ) {
-			//copy historylist up to current position
-			tempList[i] = this.historyList[i];
-		}
-		//overwrite history list with temp list, thus deleting forward branch
-		//this.historyList = tempList;
-		//add new entry to history list
-		this.historyList[this.next] = envelope;
-		// increase pointers
-		this.next++;
-		this.current++;
-		this.previous++;
-	}
+    function moveBack() {
+        var ctrl = this.controller.vOLMap.map.getControlsByClass('OpenLayers.Control.NavigationHistory')[0];
 
-	function moveBack() {
-		var env = null;
-		if ( this.previous == -1 ) {
-			// do nothing
-			alert( this.message1 );
-		} else	{
-			// move back
-			env = this.historyList[this.previous];
-			// decrease pointer
-			this.next -= 2;
-			this.current -= 2;
-			this.previous -= 2;
-			controller.actionPerformed( new Event( null, "BBOX", env ) );
-		}
-	}
+        if (ctrl.previousStack.length === 1) {
+            alert(this.message1);
+        } else {
+            ctrl.previousTrigger();
+        }
+    }
 
-	function moveForward() {
-		var env = null;
-		if ( this.next >= this.historyList.length ) {
-			// do nothing
-			alert( this.message2 );
-		} else {
-			// move forward
-			env = this.historyList[this.next];			
-			// increase pointer
-			//this.next++;
-			//this.current++;
-			//this.previous++;
-			controller.actionPerformed( new Event( null, "BBOX", env ) );
-		}
-	}
+    function moveForward() {
+        var ctrl = this.controller.vOLMap.map.getControlsByClass('OpenLayers.Control.NavigationHistory')[0];
+
+        if (ctrl.nextStack.length === 0) {
+            alert(this.message2);
+        } else {
+            ctrl.nextTrigger();
+        }
+    }
 }

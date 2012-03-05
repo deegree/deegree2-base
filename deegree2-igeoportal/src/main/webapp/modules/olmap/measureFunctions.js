@@ -1,49 +1,49 @@
 function addMeasureControl() {
-	// style the sketch fancy
+    // style the sketch fancy
     var sketchSymbolizers = getSketchSymbolizers();
     var style = new OpenLayers.Style();
-    style.addRules( [ new OpenLayers.Rule( {
+    style.addRules([ new OpenLayers.Rule({
         symbolizer : sketchSymbolizers
     }) ]);
-    var styleMap = new OpenLayers.StyleMap( {
+    var styleMap = new OpenLayers.StyleMap({
         "default" : style
     });
 
-    var line = new OpenLayers.Control.Measure(
-                 OpenLayers.Handler.Path, {
-                    persist : true,
-                    handlerOptions : {
-                        layerOptions : {
-                            styleMap : styleMap
-                        }
-                    }
-                });
-    line.events.on( {
+    var line = new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
+        persist : true,
+        handlerOptions : {
+            layerOptions : {
+                styleMap : styleMap
+            }
+        },
+        measureComplete : stopMeasuring
+    });
+    line.events.on({
         "measure" : handleMeasurements,
         "measurepartial" : handleMeasurements
     });
     line.deactivate();
-    map.addControl( line );
-    
-    var polygon = new OpenLayers.Control.Measure(
-                OpenLayers.Handler.Polygon, {
-                    persist : true,
-                    handlerOptions : {
-                        layerOptions : {
-                            styleMap : styleMap
-                        }
-                    }
-                });
-    polygon.events.on( {
+    map.addControl(line);
+
+    var polygon = new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
+        persist : true,
+        handlerOptions : {
+            layerOptions : {
+                styleMap : styleMap
+            }
+        },
+        measureComplete : stopMeasuring
+    });
+    polygon.events.on({
         "measure" : handleMeasurements,
         "measurepartial" : handleMeasurements
     });
     polygon.deactivate();
-    map.addControl( polygon );
+    map.addControl(polygon);
 }
 
 function getSketchSymbolizers() {
-	// style the sketch fancy
+    // style the sketch fancy
     return {
         "Point" : {
             pointRadius : 4,
@@ -71,5 +71,9 @@ function getSketchSymbolizers() {
 }
 
 function handleMeasurements(e) {
-	parent.controller.vMeasurement.handleMeasurements( e );
+    parent.controller.vMeasurement.handleMeasurements(e);
+}
+
+function stopMeasuring(e) {
+    parent.controller.vMeasurement.stopMeasurement(e);
 }

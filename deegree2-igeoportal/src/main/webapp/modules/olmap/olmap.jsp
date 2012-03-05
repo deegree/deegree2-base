@@ -6,7 +6,6 @@
 		<title>Insert title here</title>
 		
 		<link rel="stylesheet" href="../../javascript/openlayers/theme/default/style.css" type="text/css" />
-		<!-- script src='http://openlayers.org/dev/OpenLayers.js'></script--> 
         <script src='../../javascript/openlayers/lib/OpenLayers.js'></script>
 		<script src="../../javascript/ol_extended/LoadingPanel.js"></script>
 		       
@@ -14,6 +13,7 @@
         <script src='digitizeFunctions.js'></script>
         <script src='measureFunctions.js'></script>
         <script src='../../javascript/utils.js'></script>
+        <script src='../../javascript/jquery/jquery-1.7.1.min.js'></script>
         
         <style type="text/css">
 	       
@@ -55,15 +55,14 @@
             }
 
             function initOpenLayers(){  
-
             	var mapSRS = parent.controller.mapModel.getSrs();
                 var bbox = parent.controller.mapModel.getBoundingBox();
                 var options = {     
-                        controls:[  new OpenLayers.Control.PanZoomBar(),
-                                    new OpenLayers.Control.MousePosition(),
-                                    new OpenLayers.Control.Navigation(),
-                                    //new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-                                    //new OpenLayers.Control.LoadingPanel(),
+                        controls:[  new OpenLayers.Control.ZoomBox({autoActivate: false}),
+                                    new OpenLayers.Control.ZoomOut(),
+                                    new OpenLayers.Control.Navigation({zoomBoxEnabled: false}),
+                                    new OpenLayers.Control.MousePosition({emptyString: '-/-'}),
+                                    new OpenLayers.Control.LoadingPanel(),
                                     new OpenLayers.Control.ScaleLine()],
                                          
                         minResolution: "auto",
@@ -111,7 +110,7 @@
                         projection: mapSRS
                      };      
             	map = new OpenLayers.Map( 'map', options );   
-            	
+                
                 // assign map to OLMap object      
                 parent.controller.vOLMap.setMap( map );
 
@@ -123,6 +122,7 @@
             */
             function initFence( bbox, callback ) {
             	var boxes = new OpenLayers.Layer.Vector( "_BOXESMARKER_" );
+            	boxes.setMap(map)
             	map.addLayer( boxes );
             	
             	var control =  new OpenLayers.Control.DragFeature( boxes, { 
@@ -150,11 +150,21 @@
 	             var box = new OpenLayers.Feature.Vector( new OpenLayers.Geometry.Polygon([linearRing]), null, style );                
 	             boxes.addFeatures( [ box ] );	      
             }
+
+            var w = window
+            while(window.parent !== w) {
+            	w = window.parent
+            }
+            
+            $(w.document).ready(function(){
+            	register()
+            	initMapView()
+            })
             
          --></script>
-        
+
 	</head>
-	<body onload="register(); initMapView();">	
+	<body>	
 	   <div id="map" ></div>
 	</body>
 </html>

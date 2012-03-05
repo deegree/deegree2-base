@@ -46,7 +46,6 @@
 		<link rel="stylesheet" type="text/css" title="blue"  href="../../javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 
         <link rel="stylesheet" type="text/css" title="gray"  href="../../javascript/ext-3.3.1/resources/css/xtheme-gray.css" />
         <link rel="stylesheet" type="text/css" title="black" href="../../javascript/ext-3.3.1/resources/css/xtheme-access.css" />
-        <link rel="stylesheet" type="text/css" title="wpt" href="../../css/wpt/ext-3.3.1/css/ext-all.css" />
         <link rel="stylesheet" type="text/css" title="nds" href="../../css/nds/NDS/ext-all.css" />
 		<!--[if lt IE 7.]>
 		<script defer type="text/javascript" src="../../javascript/igeoportal/pngfix.js"></script>
@@ -205,7 +204,7 @@
                             height: 500,
                             width: 450,
                             pageX: 500,
-                            pageY: 150,
+                            pageY: 250,
                             items: [ panel ]
                         });
                         win.show();
@@ -256,7 +255,7 @@
                         height: 500,
                         width: 650,
                         pageX: 500,
-                        pageY: 150,
+                        pageY: 200,
                         items: [ panel ]
                     });
                     win.show();
@@ -292,6 +291,7 @@
 		            dataUrl: (baseURL + '?action=getTreeData'),
 		            autoScroll: false,
 		            border: false,
+		            width: 250,
 		            ddScroll: false,
 		            tbar : [ { icon : '../../images/png/add_layergroup.png', 
 		            	       tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_ADDNODE" ) %>',	            	       
@@ -302,12 +302,12 @@
 		                     { icon : '../../images/png/rename_layer.png' ,
 				               tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_RENAMENODE" ) %>',
 		                       handler: toolbarRenameNode },
-				             { icon : '../../images/png/show_metadata.png' ,
-		                       tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_OPEN_METADATA" ) %>',
-	                           handler: toolbarOpenMetadata },
-				             { icon: '../../images/png/show_abstract.png', 
-	                           tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_OPEN_ABSTRACT" ) %>',
-                               handler: toolbarOpenAbstract }
+				             //{ icon : '../../images/png/show_metadata.png' ,
+		                    //   tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_OPEN_METADATA" ) %>',
+	                         //  handler: toolbarOpenMetadata },
+				             //{ icon: '../../images/png/show_abstract.png', 
+	                         // tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_OPEN_ABSTRACT" ) %>',
+                             //handler: toolbarOpenAbstract }
 		                   ]
 		        });
 		        tree.render( 'layerTree' );		  
@@ -582,10 +582,10 @@
 		                closeAction: 'hide',
 		                shadow: false,		 
 		                autoScroll: true,               
-		                height: 200,
-		                width: 150,
+		                height: auto,
+		                width: auto,
 		                pageX: 500,
-		                pageY: 150,
+		                pageY: 200,
 		                items: [ panel ]
 		            });
 		        }
@@ -626,8 +626,8 @@
             }
 		--></script>
 	</head>
-	<body onload="register(); initLayerTree();">
+	<body onload="register(); initLayerTree();" style="width:100%">
 		<div id='legendWindowContent' style="display:none"></div>
-		<div id='layerTree'></div>
+		<div id='layerTree' style="width:300px"></div>
     </body>
 </html>

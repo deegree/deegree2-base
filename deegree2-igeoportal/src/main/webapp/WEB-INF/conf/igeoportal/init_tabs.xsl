@@ -9,6 +9,7 @@
        var verticalAdjustment = <xsl:value-of select="$vVerticalAdjustment"/>;
        var horizontalAdjustment = <xsl:value-of select="$vHorizontalAdjustment"/>;
 
+    $(document).ready(function(){
 	    Ext.onReady( function() {
 	            Ext.QuickTips.init(); 
 	            if ( controller == null ) {
@@ -16,6 +17,7 @@
 	              controller.init();
 	            }                   
 	        });
+          })
 	        
 	    function initOverlayWindows() {
 	        // overlayed windows	        
@@ -147,9 +149,9 @@
 	                            region: 'north',
                                 collapsible: false,
                                 split: false, // false=0, true=5
-                                height: 60,
-                                //html: '<img border="0" src="./images/logo-deegree.png"></img> iGeoPortal'
-                                html: '<iframe frameborder="0" marginheight="0" marginwidth="0" scrolling="no" width="100%" height="60" src="header.jsp"></iframe>'
+                                height: 100,
+                                //html: '<img border="0" src="./images/logo-nds.png"></img> iGeoPortal'
+                                html: '<iframe frameborder="0" marginheight="0" marginwidth="0" scrolling="no" width="100%" height="100" src="header.jsp"></iframe>'
 	                        },
 	                        {
 	                            id: 'centerfield',

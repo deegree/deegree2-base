@@ -42,7 +42,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>deegree <%=Version.getVersionNumber()%></title>
-        <link rel="stylesheet" type="text/css" href="../../css/deegree.css" />
+        <link rel="stylesheet" type="text/css" href="css/deegree.css" />
         <script language="JavaScript1.2" type="text/javascript" src="./javascript/rpc.js"></script>
         <script language="JavaScript1.2" type="text/javascript" >
             <!--

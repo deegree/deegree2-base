@@ -78,7 +78,6 @@
                                 <deegree:Name>./javascript/geometryfactory.js</deegree:Name>
                                 <deegree:Name>./javascript/wktadapter.js</deegree:Name>
                                 <deegree:Name>./javascript/feature.js</deegree:Name>
-                                <deegree:Name>./javascript/rendering.js</deegree:Name>
                             </deegree:CommonJS>
 							<deegree:North hidden="false">
 								

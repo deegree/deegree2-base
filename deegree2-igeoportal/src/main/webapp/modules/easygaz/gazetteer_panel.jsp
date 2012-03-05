@@ -50,7 +50,6 @@ Locale loc = request.getLocale();
         <link rel="stylesheet" type="text/css" title="blue"  href="../../javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 
         <link rel="stylesheet" type="text/css" title="gray"  href="../../javascript/ext-3.3.1/resources/css/xtheme-gray.css" />
         <link rel="stylesheet" type="text/css" title="black" href="../../javascript/ext-3.3.1/resources/css/xtheme-access.css" />
-        <link rel="stylesheet" type="text/css" title="wpt" href="../../css/wpt/ext-3.3.1/css/ext-all.css" />
         <link rel="stylesheet" type="text/css" title="nds" href="../../css/nds/NDS/ext-all.css" />
         <script type="text/javascript" src="gazetteer.js"></script>
         <script type="text/javascript" src="../../javascript/request_handler.js"></script>
@@ -105,11 +104,11 @@ Locale loc = request.getLocale();
         function initGUI() {
             Ext.QuickTips.init();   
             new Ext.Button({
-                tooltip: 'zoom to',
+                tooltip: 'in der Karte anzeigen',
                 icon: '../../images/search.png',
                 text: '<%=Messages.get( loc, "IGEO_STD_BTN_ZOOMTO" ) %>',
                 renderTo: 'ZOOM',
-                width: 100,
+                width: 85,
                 height: 25,
                 handler: function(toggled){                               
                 	zoomTo();
@@ -118,11 +117,12 @@ Locale loc = request.getLocale();
             /*
             new Ext.Button({
                 enableToggle: true,
-                tooltip: 'highlight',
+                tooltip: 'suchen',
+                font-color: black,
                 icon: '../../images/search.png',
                 text: '<%=Messages.get( loc, "IGEO_STD_EGAZ_HIGHLIGHT_CB" ) %>',
                 renderTo: 'HIGHLIGHT',
-                width: 100,
+                width: 85,
                 height: 25,
                 handler: function(toggled){                               
                     removeLayer();
@@ -176,8 +176,8 @@ Locale loc = request.getLocale();
                 triggerAction: 'all',
                 editable: false,
                 transform:'TYPES',
-                width:180,
-                listWidth:180,
+                width:130,
+                listWidth:130,
                 x: 90,
                 y: -17,
                 forceSelection:true
@@ -259,7 +259,7 @@ Locale loc = request.getLocale();
 
         function getValueList(no, name) {
             return '<div style="position:absolute; width:100px; text-decoration:none" >' + name + ':' +
-                    '<select id="' + no + '" style="position:absolute; left:90px; width:140px" '+
+                    '<select id="' + no + '" style="position:absolute; left:90px; width:130px" '+
                     'onchange="loadValues2(' + no + ')"></select></div>'
         }
 

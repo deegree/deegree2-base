@@ -51,7 +51,6 @@ Locale loc = request.getLocale();
         <link rel="stylesheet" type="text/css" title="blue"  href="../../javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 
         <link rel="stylesheet" type="text/css" title="gray"  href="../../javascript/ext-3.3.1/resources/css/xtheme-gray.css" />
         <link rel="stylesheet" type="text/css" title="black" href="../../javascript/ext-3.3.1/resources/css/xtheme-access.css" />
-        <link rel="stylesheet" type="text/css" title="wpt" href="../../css/wpt/ext-3.3.1/css/ext-all.css" />
         <link rel="stylesheet" type="text/css" title="nds" href="../../css/nds/NDS/ext-all.css" />
         <script type="text/javascript" src="../../javascript/ext-3.3.1/adapter/ext/ext-base.js"></script>
         <script type="text/javascript" src="../../javascript/ext-3.3.1/ext-all.js"></script>
@@ -99,8 +98,8 @@ Locale loc = request.getLocale();
                   tooltip: '<%=Messages.get( loc, "IGEO_STD_NOMINATIM_README_DESCRIPTION" ) %>',
                   text: '<%=Messages.get( loc, "IGEO_STD_NOMINATIM_README_DESCRIPTION" ) %>',
                   renderTo: 'buttonArea0',
-                  width: 100,
-                  height: 25,
+                  width: 70,
+                  height: 20,
                   handler: function(toggled){                               
                 	  alert('TODO');
                   }
@@ -110,8 +109,8 @@ Locale loc = request.getLocale();
                   tooltip: '<%=Messages.get( loc, "IGEO_STD_NOMINATIM_SEARCH_DESCRIPTION" ) %>',
                   text: '<%=Messages.get( loc, "IGEO_STD_NOMINATIM_SEARCH_DESCRIPTION" ) %>',
                   renderTo: 'buttonArea1',
-                  width: 60,
-                  height: 25,
+                  width: 45,
+                  height: 20,
                   handler: function(toggled){                  
                 	  search();
                   }
@@ -138,9 +137,10 @@ Locale loc = request.getLocale();
         <div class="pNominatim_searchQueryLine">
         <table border="0">
             <tr>
-                <td width="65" align="left"><div id="buttonArea1"></div></td>
-                <td width="200" align="center"><input id="queryString" type="text" name="queryString" value="" style="width:198px"></td>
+                <td width="5"></td>
+                <td width="120" align="center"><input id="queryString" type="text" name="queryString" value="" style="width:150px"></td>
                 <td width="25" align="right"><a href="javascript:openLegal()"><img src="../../images/copyright.gif" border="1" alt="copyright" /></a></td>
+                <td width="55" align="left"><div id="buttonArea1"></div></td>
             </tr>
         </table>
         </div>

@@ -147,7 +147,7 @@
         </iframe>
     </xsl:template>
     <xsl:template name="EAST">
-        <iframe frameborder="0" marginheight="0" marginwidth="0">
+        <iframe frameborder="0" marginheight="0" marginwidth="0" width="250">
             <xsl:attribute name="id"><xsl:value-of select="concat('ID',./deegree:Name)"/></xsl:attribute>
             <xsl:attribute name="name"><xsl:value-of select="concat('ID',./deegree:Name)"/></xsl:attribute>
             <xsl:attribute name="src"><xsl:value-of select="./deegree:Content"/></xsl:attribute>

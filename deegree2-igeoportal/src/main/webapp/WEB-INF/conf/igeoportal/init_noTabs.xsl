@@ -10,6 +10,7 @@
        var verticalAdjustment = <xsl:value-of select="$vVerticalAdjustment"/>;
        var horizontalAdjustment = <xsl:value-of select="$vHorizontalAdjustment"/>;
 
+    $(document).ready(function(){
 	    Ext.onReady( function() {
 	           
 	           Ext.QuickTips.init(); 
@@ -18,6 +19,7 @@
 	              controller.init();
 	            }                   
 	        });
+          })
 	        
 	    function initOverlayWindows() {
             // overlayed windows            

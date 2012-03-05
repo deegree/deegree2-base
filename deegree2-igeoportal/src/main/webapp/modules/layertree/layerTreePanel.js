@@ -23,6 +23,7 @@ Ext.extend(deegree.igeo.layerTreeNodeUI, Ext.tree.TreeNodeUI, {
         if ( typeof a.infoText == "undefined" ) {
             a.infoText = "";
         }
+        
         if ( displayImg ) {
             a.icon = a.img;
         }
@@ -101,7 +102,7 @@ deegree.igeo.layerTreePanel = function(config) {
         iconCls: 'folder',
         draggable:false,
         expanded:true,
-        id:'root'        
+        id:'root'
     });
     
     this.setRootNode(root);

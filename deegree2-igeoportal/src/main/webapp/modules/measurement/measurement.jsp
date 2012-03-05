@@ -50,7 +50,6 @@ Locale loc = request.getLocale();
         <link rel="stylesheet" type="text/css" title="blue"  href="../../javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 
         <link rel="stylesheet" type="text/css" title="gray"  href="../../javascript/ext-3.3.1/resources/css/xtheme-gray.css" />
         <link rel="stylesheet" type="text/css" title="black" href="../../javascript/ext-3.3.1/resources/css/xtheme-access.css" />
-        <link rel="stylesheet" type="text/css" title="wpt" href="../../css/wpt/ext-3.3.1/css/ext-all.css" />
         <link rel="stylesheet" type="text/css" title="nds" href="../../css/nds/NDS/ext-all.css" />
         <script type="text/javascript" src="measurement.js"></script>
         <script type="text/javascript" src="../../javascript/ext-3.3.1/adapter/ext/ext-base.js"></script>
@@ -88,7 +87,7 @@ Locale loc = request.getLocale();
                     enableToggle: true,
                     x: 10,
                     y: 10,
-                    tooltip: 'measure length',
+                    tooltip: 'Streckenlänge messen',
                     icon: './images/measure_length.png',
                     handler: function(toggled){
 	                	if (toggled) {
@@ -102,7 +101,7 @@ Locale loc = request.getLocale();
                     enableToggle: true,
                     x: 40,
                     y: 10,
-                    tooltip: 'measure area',
+                    tooltip: 'Fläche messen',
                     icon: './images/measure_areas.png',
                     handler: function(toggled){
 	                	if (toggled) {
@@ -115,7 +114,7 @@ Locale loc = request.getLocale();
                 diItems.push( new Ext.Button({
                     x: 70,
                     y: 10,
-                    tooltip: 'reset',
+                    tooltip: 'Eingaben zurücksetzten',
                     icon: './images/refresh.gif',
                     handler: function(toggled){
 	                	if (toggled) {
@@ -137,29 +136,32 @@ Locale loc = request.getLocale();
     </head>
     <body onload="register(); init();" >
 	   <div id="measureTB"></div>
-       <div style="position:absolute;  visibility:hidden; left:5px; heigth:80px; top:40px;">
+       <div style="position:absolute;  visibility:hidden; left:10px; heigth:80px; top:50px;">
 		   <table id='tbLength'  border="0" cellspacing="4">
 		       <tr>
-		           <td width="70px"><%=Messages.get( loc,"IGEO_STD_MEASURE_LENGTH" )%></td>
-		           <td><input id='inpLength' type="text" size="12"></td>
-		           <td>m</td>
+		           <td width="40px"><%=Messages.get( loc,"IGEO_STD_MEASURE_LENGTH" )%></td>
+		           <td width="90px"><input id='inpLength' type="text" size="11"></td>
+		            <td width="5px"></td>
+                   <td>m</td>
 		       </tr>
+              <tr height="10px"></tr>
 		   </table>
-		   <br></br>
+		  
 		   <table id='tbArea' border="0" cellspacing="4">
                <tr>
-                   <td width="70px"><%=Messages.get( loc,"IGEO_STD_MEASURE_AREA" )%></td>
-                   <td><input id='inpArea' type="text" size="12"></td>
+                   <td width="40px"><%=Messages.get( loc,"IGEO_STD_MEASURE_AREA" )%></td>
+                   <td width="90px"><input id='inpArea' type="text" size="11"></td>
+                   <td width="5px"></td>
                    <td>m²</td>
                </tr>
            </table>
 	   </div>
-	   <div id="buttonArea" style="position:absolute; visibility:hidden; left:5px; heigth:30px; top:105px;" 
+	   <div id="buttonArea" style="position:absolute; visibility:hidden; left:10px; heigth:30px; top:115px;" 
             title='<%=Messages.get( loc, "IGEO_STD_MEASURE_SEG_INFO_TT" )%>'>
 	       <a class="buttonArea" style="position:absolute; width:120px;" href="javascript:parent.controller.vMeasurement.showSegmentInfo()">
 	           <%=Messages.get( loc,"IGEO_STD_MEASURE_SEG_INFO" )%>
            </a>
 	   </div>
-	   <div id="segInfoArea" style="position:absolute; left:5px; heigth:200px; top:130px; width:200px; visibility:hidden" ></div>
+	   <div id="segInfoArea" style="position:absolute; left:10px; heigth:200px; top:140px; width:200px; visibility:hidden" ></div>
 	</body>
 </html>
