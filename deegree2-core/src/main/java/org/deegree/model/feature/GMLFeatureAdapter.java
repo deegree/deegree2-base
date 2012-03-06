@@ -986,7 +986,7 @@ public class GMLFeatureAdapter {
             QualifiedName qn = properties[i].getName();
             String ln = qn.getLocalName();
             exportEnv = exportEnv
-                        && !( qn.getNamespace().equals( GMLNS ) && ( ln.equals( "description" ) || ln.equals( "name" ) ) );
+                        && !( GMLNS.equals( qn.getNamespace() ) && ( "description".equals( ln ) || "name".equals( ln ) ) );
 
             if ( exportEnv ) {
                 exportBoundedBy( feature, pw );
