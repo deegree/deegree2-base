@@ -47,7 +47,6 @@ import org.deegree.framework.log.LoggerFactory;
 import org.deegree.framework.xml.Marshallable;
 import org.deegree.model.feature.Feature;
 import org.deegree.model.filterencoding.FilterEvaluationException;
-import org.deegree.model.filterencoding.PropertyName;
 
 /**
  * A Graphic is a "graphic symbol" with an inherent shape, color, and size. Graphics can either be referenced from an
@@ -520,8 +519,8 @@ public class Graphic implements Marshallable {
         int sX = intSizeX;
         int sY = intSizeY;
         if ( r != 0 ) {
-            sX = (int) ( intSizeX * 1.41 );
-            sY = (int) ( intSizeY * 1.41 );
+            sX = (int) Math.ceil( Math.sin( r ) * intSizeY + Math.cos( r ) * intSizeX );
+            sY = (int) Math.ceil( Math.sin( r ) * intSizeX + Math.cos( r ) * intSizeY );
         }
         image = new BufferedImage( sX, sY, BufferedImage.TYPE_INT_ARGB );
 
