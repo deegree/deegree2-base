@@ -15,8 +15,6 @@ Locale loc = request.getLocale();
         <link rel="stylesheet" type="text/css" title="blue"  href="../../javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 
         <link rel="stylesheet" type="text/css" title="gray"  href="../../javascript/ext-3.3.1/resources/css/xtheme-gray.css" />
         <link rel="stylesheet" type="text/css" title="black" href="../../javascript/ext-3.3.1/resources/css/xtheme-access.css" />
-        <link rel="stylesheet" type="text/css" title="wpt" href="../../css/wpt/ext-3.3.1/css/ext-all.css" />
-        <link rel="stylesheet" type="text/css" title="nds" href="../../css/nds/NDS/ext-all.css" />
         <link rel="stylesheet" href="../../javascript/openlayers/theme/default/style.css" type="text/css" />
         <!-- script src='http://openlayers.org/dev/OpenLayers.js'></script--> 
         <script src='../../javascript/openlayers/lib/OpenLayers.js'></script> 

@@ -51,7 +51,6 @@ Locale loc = request.getLocale();
         <link rel="stylesheet" type="text/css" title="blue"  href="../../javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 
         <link rel="stylesheet" type="text/css" title="gray"  href="../../javascript/ext-3.3.1/resources/css/xtheme-gray.css" />
         <link rel="stylesheet" type="text/css" title="black" href="../../javascript/ext-3.3.1/resources/css/xtheme-access.css" />
-        <link rel="stylesheet" type="text/css" title="nds" href="../../css/nds/NDS/ext-all.css" />
         <script type="text/javascript" src="../../javascript/ext-3.3.1/adapter/ext/ext-base.js"></script>
         <script type="text/javascript" src="../../javascript/ext-3.3.1/ext-all.js"></script>
         

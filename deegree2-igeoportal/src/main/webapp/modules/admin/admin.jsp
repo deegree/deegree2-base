@@ -48,8 +48,7 @@
 		<link rel="stylesheet" type="text/css" title="blue"  href="../../javascript/ext-3.3.1/resources/css/xtheme-blue.css" /> 
         <link rel="stylesheet" type="text/css" title="gray"  href="../../javascript/ext-3.3.1/resources/css/xtheme-gray.css" />
         <link rel="stylesheet" type="text/css" title="black" href="../../javascript/ext-3.3.1/resources/css/xtheme-access.css" />
-        <link rel="stylesheet" type="text/css" title="wpt" href="../../css/wpt/ext-3.0.0/css/ext-all.css" />
-        <link rel="stylesheet" type="text/css" title="nds" href="../../css/nds/NDS/ext-all.css" />
+
         -->
         <link rel="stylesheet" href="../../css/deegree.css" type="text/css" />
        <style type="text/css">
