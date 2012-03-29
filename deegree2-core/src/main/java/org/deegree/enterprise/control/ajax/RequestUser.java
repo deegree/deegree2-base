@@ -61,7 +61,7 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @version $Revision$ $Date$
  */
-class RequestUser {
+public class RequestUser {
     private Properties userData;
 
     /**
