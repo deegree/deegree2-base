@@ -300,7 +300,8 @@
 				               handler: toolbarRemoveNode },
 		                     { icon : '../../images/png/rename_layer.png' ,
 				               tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_RENAMENODE" ) %>',
-		                       handler: toolbarRenameNode },
+		                       handler: toolbarRenameNode }
+		                       //,
 				             //{ icon : '../../images/png/show_metadata.png' ,
 		                    //   tooltip: '<%=Messages.get( loc,"IGEO_STD_LAYTREE_OPEN_METADATA" ) %>',
 	                         //  handler: toolbarOpenMetadata },
