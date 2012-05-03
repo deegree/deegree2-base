@@ -110,7 +110,9 @@ OpenLayers.Tile.Image = OpenLayers.Class(OpenLayers.Tile, {
 
         this.url = url; //deprecated remove me
         
-        this.frame = document.createElement('div'); 
+        var doc = window.parent.controller.vOLMap.div.ownerDocument
+
+        this.frame = doc.createElement('div'); 
         this.frame.style.overflow = 'hidden'; 
         this.frame.style.position = 'absolute'; 
 

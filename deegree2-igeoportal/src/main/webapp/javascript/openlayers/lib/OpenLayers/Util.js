@@ -226,7 +226,9 @@ OpenLayers.Util.modifyDOMElement = function(element, id, px, sz, position,
 OpenLayers.Util.createDiv = function(id, px, sz, imgURL, position, 
                                      border, overflow, opacity) {
 
-    var dom = document.createElement('div');
+    var doc = window.parent.controller.vOLMap.div.ownerDocument
+
+    var dom = doc.createElement('div');
 
     if (imgURL) {
         dom.style.backgroundImage = 'url(' + imgURL + ')';
@@ -289,7 +291,9 @@ return dom;
 OpenLayers.Util.createImage = function(id, px, sz, imgURL, position, border,
                                        opacity, delayDisplay) {
 
-    var image = document.createElement("img");
+    var doc = window.parent.controller.vOLMap.div.ownerDocument
+
+    var image = doc.createElement("img");
 
     //set generic properties
     if (!id) {
