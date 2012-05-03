@@ -526,9 +526,9 @@
 													0, 0, this.mapModel.getWidth()-1, this.mapModel.getHeight()-1 );
 				}
 			}
-					</script>
+		            function fixIE(){                $('#mappanelheightfix').children().css('height', '100%')                    .children().css('height', '100%')            }    			</script>
 		</head>
-		        <body onload="init_iGeo(); setActiveStyleSheet('blue')">            <div id="menubar"/>            <div id="legendWindowContent" style="display:none"/>        </body>    
+		        <body onload="init_iGeo(); setActiveStyleSheet('blue'); fixIE()">            <div id="menubar"/>            <div id="legendWindowContent" style="display:none"/>        </body>    
 	</html>
 	</xsl:template>
 </xsl:stylesheet>

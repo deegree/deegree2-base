@@ -32,6 +32,10 @@
 				items: [
 					<xsl:for-each select="//deegree:Center/deegree:Module[./@hidden != 'true' and ./@overlay != 'true' ]">
 						{
+                        <xsl:if test="deegree:Name = 'OLMap'">
+                        style: 'height: 100%;',
+                        id: 'mappanelheightfix',
+                        </xsl:if>
 						html: '<xsl:call-template name="CENTER"/>',
 						border: false
 						}
