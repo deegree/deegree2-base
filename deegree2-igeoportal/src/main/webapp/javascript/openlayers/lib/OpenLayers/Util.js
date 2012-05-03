@@ -245,6 +245,28 @@ OpenLayers.Util.createDiv = function(id, px, sz, imgURL, position,
     return dom;
 };
 
+OpenLayers.Util.createDiv2 = function(doc, id, px, sz, imgURL, position, 
+        border, overflow, opacity) {
+
+var dom = doc.createElement('div');
+
+if (imgURL) {
+dom.style.backgroundImage = 'url(' + imgURL + ')';
+}
+
+//set generic properties
+if (!id) {
+id = OpenLayers.Util.createUniqueID("OpenLayersDiv");
+}
+if (!position) {
+position = "absolute";
+}
+OpenLayers.Util.modifyDOMElement(dom, id, px, sz, position, 
+        border, overflow, opacity);
+
+return dom;
+};
+
 /**
  * Function: createImage
  * Creates an img element with specific attribute values.

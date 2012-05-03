@@ -130,13 +130,15 @@ function OLMap(mapModel) {
     function pushLayers() {
         var layerGroups = controller.mapModel.getLayerList().getLayerGroups();
 
+        var self = this
+
         // dummy layer will be used to enable all WMS based layers not to be a base layer
         // and so can be used with transparent = true
-        var dummy = new OpenLayers.Layer.Vector("_DUMMY_BASE_", {
+        var dummy = new OpenLayers.Layer("_DUMMY_BASE_", {
             isBaseLayer : true
         });
-        dummy.setMap(this.map)
-        this.map.addLayer(dummy);
+        dummy.setMap(self.map)
+        self.map.addLayer(dummy);
 
         // get session id if user has logged in
         var sid = "";

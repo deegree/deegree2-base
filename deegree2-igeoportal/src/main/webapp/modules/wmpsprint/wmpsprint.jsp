@@ -55,7 +55,7 @@
         
 		<link href="../../javascript/ext-3.3.1/resources/css/structure/combo.css" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="../../javascript/openlayers/theme/default/style.css" type="text/css" />
-        <script src='../../javascript/openlayers/OpenLayers.js'></script>
+        <script src='../../javascript/openlayers/lib/OpenLayers.js'></script>
 		<script type="text/javascript" src="wmpsprint.js"></script>
 		<script type="text/javascript" src="../../javascript/request_handler.js"></script>
 		<script type="text/javascript" src="../../javascript/json2.js"></script>

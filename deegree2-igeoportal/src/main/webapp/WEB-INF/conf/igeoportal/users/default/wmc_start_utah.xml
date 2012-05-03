@@ -98,7 +98,7 @@
           <deegree:Name>./javascript/request_handler.js</deegree:Name>
           <deegree:Name>./javascript/utils.js</deegree:Name>
           <deegree:Name>./javascript/wktadapter.js</deegree:Name>
-          <deegree:Name>./javascript/openlayers/OpenLayers.js</deegree:Name>
+          <deegree:Name>./javascript/openlayers/lib/OpenLayers.js</deegree:Name>
         </deegree:CommonJS>
                 <!-- NORTH -->
                 <deegree:North hidden="false">

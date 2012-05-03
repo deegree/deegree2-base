@@ -336,16 +336,16 @@ OpenLayers.Layer = OpenLayers.Class({
      * options - {Object} Hashtable of extra options to tag onto the layer
      */
     initialize: function(name, options) {
-
         this.addOptions(options);
 
         this.name = name;
-        
+
         if (this.id == null) {
 
             this.id = OpenLayers.Util.createUniqueID(this.CLASS_NAME + "_");
 
-            this.div = OpenLayers.Util.createDiv(this.id);
+            var doc = window.parent.controller.vOLMap.div.ownerDocument
+            this.div = OpenLayers.Util.createDiv2(doc, this.id);
             this.div.style.width = "100%";
             this.div.style.height = "100%";
             this.div.dir = "ltr";

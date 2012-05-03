@@ -50,8 +50,8 @@
             
             function initMapView() {
                 parent.controller.initOLMap( document );
-                initOpenLayers();        
                 parent.controller.repaint();
+                initOpenLayers();        
             }
 
             function initOpenLayers(){  
@@ -157,14 +157,14 @@
             }
             
             $(w.document).ready(function(){
-            	register()
-            	initMapView()
+                register()
+                initMapView()
             })
-            
+
          --></script>
 
 	</head>
-	<body>	
+	<body>
 	   <div id="map" ></div>
 	</body>
 </html>
