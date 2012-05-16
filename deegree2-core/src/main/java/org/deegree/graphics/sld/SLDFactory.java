@@ -1501,6 +1501,7 @@ public class SLDFactory {
 
         // required: href-Attribute (in <OnlineResource>)
         String href = XMLTools.getRequiredAttrValue( "href", xlnNS, onlineResourceElement );
+        String title = XMLTools.getAttrValue( onlineResourceElement, xlnNS, "title", null );
         URL url = null;
         try {
             url = sldDoc.resolve( href );
@@ -1512,8 +1513,9 @@ public class SLDFactory {
 
         // required: <Format> (in <OnlineResource>)
         String format = XMLTools.getRequiredStringValue( "Format", CommonNamespaces.SLDNS, element );
+        
 
-        return new ExternalGraphic( format, url );
+        return new ExternalGraphic( format, url, title );
     }
 
     /**
