@@ -223,7 +223,14 @@ function initGUI() {
 
 	   var viewport = new Ext.Viewport({
 		     id: 'VIEWPORT',
-			 layout:'absolute',
-			 items : diItems	    	        	    
+			 layout:'fit',
+       height: 600,
+			 items : {
+          layout: 'absolute',
+          autoHeight: true,
+          items: diItems
+          },
+			 resizeEvent: '',
+			 stateEvents: []
 	       })
 }

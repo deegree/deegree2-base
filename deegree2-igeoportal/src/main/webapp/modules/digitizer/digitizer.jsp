@@ -45,6 +45,6 @@ Locale loc = request.getLocale();
             
         </script>
 	</head>
-	<body onload="register(); initGUI();" onunload="processReset('yes')">
+	<body onload="register(); initGUI();" onunload="processReset('yes')" style="width: 100%; height: 100%;">
 	</body>
 </html>

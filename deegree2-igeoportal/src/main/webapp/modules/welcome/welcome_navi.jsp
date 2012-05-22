@@ -42,7 +42,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>deegree <%=Version.getVersionNumber()%></title>
         <link rel="stylesheet" type="text/css" href="../../css/deegree.css" />
-        <!-- javascript:openGUI is defined in surrounding welcome.jsp -->
+        <script type='text/javascript'>
+            var openGUI = window.parent.openGUI
+        </script>
     </head>
     <body>
         <table width="100%" border="1" cellspacing="0" cellpadding="3">

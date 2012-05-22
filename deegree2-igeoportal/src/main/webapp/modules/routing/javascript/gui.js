@@ -90,8 +90,9 @@ function RoutingGUI() {
 
 		new this.routingFrame.Ext.Viewport( {
 			id : 'VIEWPORT',
-			layout : 'border',
-			items : [ rootPanel ]
+			layout : 'fit',
+			items : [ rootPanel ],
+			stateful: false
 		});
 	}
 
