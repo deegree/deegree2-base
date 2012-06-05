@@ -40,7 +40,6 @@ import static org.deegree.framework.xml.XMLTools.escape;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -53,7 +52,6 @@ import javax.media.jai.RenderedOp;
 
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.Transcoder;
-import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
@@ -280,24 +278,17 @@ public class ExternalGraphic implements Marshallable {
                 trc.addTranscodingHint( SVGAbstractTranscoder.KEY_WIDTH, new Float( targetSizeY ) );
                 try {
                     trc.transcode( input, output );
-                    try {
-                        bos.flush();
-                        bos.close();
-                    } catch ( IOException e3 ) {
-                        e3.printStackTrace();
-                    }
-                } catch ( TranscoderException e ) {
-                    LOG.logError( e.getMessage(), e );
-                }
-                try {
+                    bos.flush();
+                    bos.close();
                     ByteArrayInputStream is = new ByteArrayInputStream( bos.toByteArray() );
                     MemoryCacheSeekableStream mcss = new MemoryCacheSeekableStream( is );
                     RenderedOp rop = JAI.create( "stream", mcss );
                     image = rop.getAsBufferedImage();
                     cache.put( targetSizeX + '_' + targetSizeY + '_' + onlineResource.getFile(), image );
                     mcss.close();
-                } catch ( IOException e1 ) {
-                    LOG.logError( e1.getMessage(), e1 );
+                } catch ( Throwable e ) {
+                    LOG.logDebug( e.getMessage(), e );
+                    LOG.logError( e.getMessage() );
                 }
             }
         }
