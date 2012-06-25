@@ -30,13 +30,13 @@
 
   <profiles>
     <profile>
-      <id>arcsde</id>
+      <id>oracle</id>
       <modules>
         <module>deegree2-oracle</module>
       </modules>
     </profile>
     <profile>
-      <id>oracle</id>
+      <id>arcsde</id>
       <modules>
         <module>deegree2-arcsde</module>
       </modules>
