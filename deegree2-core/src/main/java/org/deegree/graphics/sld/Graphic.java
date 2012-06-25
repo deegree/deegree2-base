@@ -508,7 +508,7 @@ public class Graphic implements Marshallable {
             }
         }
 
-        if ( intSizeX <= 0 || intSizeY <= 0 || intSizeX > 1000 || intSizeY > 1000 ) {
+        if ( intSizeX <= 0 || intSizeY <= 0 ) {
             // if there are no ExternalGraphics, use default value of 1 pixel
             LOG.logDebug( intSizeX + " - " + intSizeY );
             intSizeX = 1;
