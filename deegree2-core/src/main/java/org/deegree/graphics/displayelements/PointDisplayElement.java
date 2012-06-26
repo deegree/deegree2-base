@@ -131,22 +131,32 @@ class PointDisplayElement extends GeometryDisplayElement {
     public void paint( Graphics g, GeoTransform projection, double scale ) {
         synchronized ( symbolizer ) {
             ( (ScaledFeature) feature ).setScale( scale );
+            Envelope env = projection.getSourceRect();
+            if ( !env.contains( geometry.getEnvelope() ) ) {
+                return;
+            }
             try {
                 Image image = defaultImg;
 
+                double[] dis = ( (PointSymbolizer) symbolizer ).getGraphic().getDisplacement( feature );
+
                 if ( ( (PointSymbolizer) symbolizer ).getGraphic() != null ) {
-                    image = ( (PointSymbolizer) symbolizer ).getGraphic().getAsImage( feature );
+                    image = ( (PointSymbolizer) symbolizer ).getGraphic().getAsImage( feature, projection, geometry,
+                                                                                      (Graphics2D) g, dis );
                 }
                 Graphics2D g2D = (Graphics2D) g;
 
-                double[] dis = ( (PointSymbolizer) symbolizer ).getGraphic().getDisplacement( feature );
                 if ( geometry instanceof Point ) {
-                    drawPoint( g2D, (Point) geometry, projection, image, dis );
+                    if ( image != null ) {
+                        drawPoint( g2D, (Point) geometry, projection, image, dis );
+                    }
                 } else {
                     MultiPoint mp = (MultiPoint) geometry;
 
-                    for ( int i = 0; i < mp.getSize(); i++ ) {
-                        drawPoint( g2D, mp.getPointAt( i ), projection, image, dis );
+                    if ( image != null ) {
+                        for ( int i = 0; i < mp.getSize(); i++ ) {
+                            drawPoint( g2D, mp.getPointAt( i ), projection, image, dis );
+                        }
                     }
                 }
             } catch ( FilterEvaluationException e ) {
@@ -162,7 +172,8 @@ class PointDisplayElement extends GeometryDisplayElement {
      * @param point
      * @param projection
      * @param image
-     * @param dis displacement
+     * @param dis
+     *            displacement
      */
     private void drawPoint( Graphics2D g, Point point, GeoTransform projection, Image image, double[] dis ) {
         Envelope destSize = projection.getDestRect();

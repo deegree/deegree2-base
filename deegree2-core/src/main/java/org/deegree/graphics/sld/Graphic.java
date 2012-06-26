@@ -45,8 +45,11 @@ import java.util.List;
 import org.deegree.framework.log.ILogger;
 import org.deegree.framework.log.LoggerFactory;
 import org.deegree.framework.xml.Marshallable;
+import org.deegree.graphics.transformation.GeoTransform;
 import org.deegree.model.feature.Feature;
 import org.deegree.model.filterencoding.FilterEvaluationException;
+import org.deegree.model.spatialschema.MultiPoint;
+import org.deegree.model.spatialschema.Point;
 
 /**
  * A Graphic is a "graphic symbol" with an inherent shape, color, and size. Graphics can either be referenced from an
@@ -432,7 +435,6 @@ public class Graphic implements Marshallable {
         this.rotation = pvt;
     }
 
-
     /**
      * 
      * @param rotation
@@ -441,7 +443,7 @@ public class Graphic implements Marshallable {
     public void setRotation( ParameterValueType rotation ) {
         this.rotation = rotation;
     }
-    
+
     /**
      * @see PointPlacement#getDisplacement(Feature) <p>
      * @param displacement
@@ -454,6 +456,57 @@ public class Graphic implements Marshallable {
             pvtArray[i] = pvt;
         }
         this.displacement = pvtArray;
+    }
+
+    private BufferedImage drawSinglePoint( GeoTransform transform, Point p, Feature feature, Graphics2D graphics,
+                                           ExternalGraphic ext, int size, double[] dis, double rotation )
+                            throws FilterEvaluationException {
+        // TODO also consider size of symbol
+        int x = (int) Math.round( transform.getDestX( p.getX() ) + 0.5 + dis[0] );
+        int y = (int) Math.round( transform.getDestY( p.getY() ) + 0.5 + dis[1] );
+        BufferedImage img = ext.paint( graphics, feature, x, y, size, size, rotation );
+        if ( img != null ) {
+            // fallback if svg rendering failed at some point
+            return getAsImage( feature );
+        }
+        return null;
+    }
+
+    public BufferedImage getAsImage( Feature feature, GeoTransform transform,
+                                     org.deegree.model.spatialschema.Geometry geometry, Graphics2D graphics,
+                                     double[] dis )
+                            throws FilterEvaluationException {
+        int size = (int) getSize( feature );
+        double rotation = getRotation( feature );
+        for ( int i = 0; i < marksAndExtGraphics.size(); i++ ) {
+            Object o = marksAndExtGraphics.get( i );
+            if ( o instanceof ExternalGraphic ) {
+                if ( geometry instanceof Point ) {
+                    Point p = (Point) geometry;
+                    BufferedImage img = drawSinglePoint( transform, p, feature, graphics, (ExternalGraphic) o, size,
+                                                         dis, rotation );
+                    if ( img != null ) {
+                        // fallback if svg rendering failed at some point
+                        return img;
+                    }
+                } else {
+                    if ( geometry instanceof MultiPoint ) {
+                        MultiPoint mp = (MultiPoint) geometry;
+                        for ( Point p : mp.getAllPoints() ) {
+                            BufferedImage img = drawSinglePoint( transform, p, feature, graphics, (ExternalGraphic) o,
+                                                                 size, dis, rotation );
+                            if ( img != null ) {
+                                // fallback if svg rendering failed at some point
+                                return img;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            return getAsImage( feature );
+        }
+        return null;
     }
 
     /**

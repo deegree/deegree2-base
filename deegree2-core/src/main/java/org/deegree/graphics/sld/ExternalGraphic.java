@@ -37,6 +37,9 @@ package org.deegree.graphics.sld;
 
 import static org.deegree.framework.xml.XMLTools.escape;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +53,11 @@ import java.util.Map;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -61,6 +69,7 @@ import org.deegree.framework.util.StringTools;
 import org.deegree.framework.xml.Marshallable;
 import org.deegree.model.feature.Feature;
 import org.deegree.model.feature.FeatureProperty;
+import org.w3c.dom.svg.SVGDocument;
 
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 
@@ -301,6 +310,71 @@ public class ExternalGraphic implements Marshallable {
     }
 
     /**
+     * @param graphics
+     * @param feature
+     * @param height
+     * @param width
+     * @param y
+     * @param x
+     * @return null, if graphic was painted through vector rendering, else the image to be painted elsewhere (in
+     *         {@link Graphic})
+     */
+    public BufferedImage paint( Graphics2D graphics, Feature feature, int x, int y, int width, int height,
+                                double rotation ) {
+        URL url = initializeOnlineResource( feature );
+
+        if ( url.toExternalForm().toLowerCase().endsWith( ".svg" ) ) {
+
+            try {
+                SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(
+                                                                     "com.sun.org.apache.xerces.internal.parsers.SAXParser",
+                                                                     false );
+
+                SVGDocument document = (SVGDocument) f.createDocument( url.toExternalForm() );
+
+                UserAgentAdapter adapter = new UserAgentAdapter();
+                BridgeContext bridgeContext = new BridgeContext( adapter );
+
+                GVTBuilder builder = new GVTBuilder();
+
+                GraphicsNode node = builder.build( bridgeContext, document );
+                Rectangle2D bounds = node.getGeometryBounds();
+
+                AffineTransform t = graphics.getTransform();
+                double aspect = bounds.getWidth() / bounds.getHeight();
+                width = (int) Math.round( width * aspect );
+
+                double w = bounds.getMaxX() - bounds.getMinX();
+                double h = bounds.getMaxY() - bounds.getMinY();
+
+                double scalex = width / bounds.getWidth();
+                double scaley = height / bounds.getHeight();
+                t.translate( x, y );
+                AffineTransform orig = graphics.getTransform();
+
+                AffineTransform nodeTransform = new AffineTransform();
+                nodeTransform.scale( scalex, scaley );
+                nodeTransform.rotate( Math.toRadians( rotation ) );
+                nodeTransform.translate( -bounds.getMinX() - w / 2, -bounds.getMinY() - h / 2 );
+                node.setTransform( nodeTransform );
+
+                graphics.setTransform( t );
+
+                node.paint( graphics );
+
+                graphics.setTransform( orig );
+            } catch ( Throwable e ) {
+                LOG.logWarning( "Using raster rendering for svg symbol, because vector rendering failed: "
+                                + e.getLocalizedMessage() );
+                // try to render it the old way
+                return getAsImage( width, height, feature );
+            }
+            return null;
+        }
+        return getAsImage( width, height, feature );
+    }
+
+    /**
      * @param feature
      * @return online resource URL
      */
@@ -355,6 +429,7 @@ public class ExternalGraphic implements Marshallable {
      * 
      * @return xml representation of the ExternalGraphic
      */
+    @Override
     public String exportAsXML() {
 
         StringBuffer sb = new StringBuffer( 200 );
