@@ -227,10 +227,11 @@ function initGUI() {
        height: 600,
 			 items : {
           layout: 'absolute',
-          autoHeight: true,
+          height: 600,
           items: diItems
-          },
-			 resizeEvent: '',
-			 stateEvents: []
+          }
+//	   ,
+//			 resizeEvent: '',
+//			 stateEvents: []
 	       })
 }

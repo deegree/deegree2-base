@@ -125,8 +125,13 @@ Locale loc = request.getLocale();
 
                 var viewport = new Ext.Viewport({
                     id: 'VIEWPORT',
-                    layout:'absolute',
-                    items : diItems                            
+       			 layout:'fit',
+       	       height: 600,
+       				 items : {
+       	          layout: 'absolute',
+       	          height: 600,
+       	          items: diItems
+       	          }
                   })
             }
             
