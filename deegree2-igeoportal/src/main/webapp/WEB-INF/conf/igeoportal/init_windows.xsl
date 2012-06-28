@@ -95,12 +95,19 @@
 	           windowHeigth = window.innerHeight; 
 	       }
 	       
-	        try {
-	            initOverlayWindows();	      
-                initMenubar(<xsl:value-of select="boolean(//deegree:Module[./deegree:Name = 'AdminConsole'])"/>);
+           try {
+                initOverlayWindows();
             } catch(e) {
-                alert( "initMenubar: " + e);
+                alert( "initOverlayWindows: " + e);
             }
+         
+            <xsl:if test="boolean(//deegree:Module[./deegree:Name = 'MenuBarTop'])">
+    	        try {
+                    initMenubar(<xsl:value-of select="boolean(//deegree:Module[./deegree:Name = 'AdminConsole'])"/>);
+                } catch(e) {
+                    alert( "initMenubar: " + e);
+                }
+            </xsl:if>
 	        
 	        // panel for map view; will alway be located within center panel
 	        var panel = {

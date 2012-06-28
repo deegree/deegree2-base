@@ -77,11 +77,13 @@
 	            alert( "initOverlayWindows: " + e);
 	        }
 	            
-	        try {
-	            initMenubar(<xsl:value-of select="boolean(//deegree:Module[./deegree:Name = 'AdminConsole'])"/>);
-	        } catch(e) {
-	            alert( "initMenubar: " + e);
-	        }
+            <xsl:if test="boolean(//deegree:Module[./deegree:Name = 'MenuBarTop'])">
+    	        try {
+    	            initMenubar(<xsl:value-of select="boolean(//deegree:Module[./deegree:Name = 'AdminConsole'])"/>);
+    	        } catch(e) {
+    	            alert( "initMenubar: " + e);
+    	        }
+            </xsl:if>
 	        	      
 	        var vp ;
 	        try {
