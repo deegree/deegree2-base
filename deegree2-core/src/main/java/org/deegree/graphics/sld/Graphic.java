@@ -37,10 +37,16 @@ package org.deegree.graphics.sld;
 
 import static java.lang.Math.toRadians;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.deegree.framework.log.ILogger;
 import org.deegree.framework.log.LoggerFactory;
@@ -564,21 +570,24 @@ public class Graphic implements Marshallable {
         if ( intSizeX <= 0 || intSizeY <= 0 ) {
             // if there are no ExternalGraphics, use default value of 1 pixel
             LOG.logDebug( intSizeX + " - " + intSizeY );
-            intSizeX = 1;
-            intSizeY = 1;
+            intSizeX = 6;
+            intSizeY = 6;
         }
 
         double r = getRotation( feature );
         int sX = intSizeX;
         int sY = intSizeY;
         if ( r != 0 ) {
-            sX = (int) Math.ceil( Math.sin( r ) * intSizeY + Math.cos( r ) * intSizeX );
-            sY = (int) Math.ceil( Math.sin( r ) * intSizeX + Math.cos( r ) * intSizeY );
+            if ( sX > sY ) {
+                sX = (int) Math.ceil( 2 * sX / Math.sqrt( 2 ) );
+            } else {
+                sX = (int) Math.ceil( 2 * sY / Math.sqrt( 2 ) );
+            }
+            sY = sX;
         }
         image = new BufferedImage( sX, sY, BufferedImage.TYPE_INT_ARGB );
 
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.rotate( toRadians( r ), sX >> 1, sY >> 1 );
 
         for ( int i = 0; i < marksAndExtGraphics.size(); i++ ) {
             Object o = marksAndExtGraphics.get( i );
@@ -587,10 +596,27 @@ public class Graphic implements Marshallable {
             if ( o instanceof ExternalGraphic ) {
                 extImage = ( (ExternalGraphic) o ).getAsImage( intSizeX, intSizeY, feature );
             } else {
-                extImage = ( (Mark) o ).getAsImage( feature, intSizeX );
+                extImage = ( (Mark) o ).getAsImage( feature, sX );
+                intSizeImgX = extImage.getWidth();
+                intSizeImgY = extImage.getHeight();
             }
 
-            g.drawImage( extImage, sX / 2 - intSizeX / 2, sY / 2 - intSizeY / 2, intSizeX, intSizeY, null );
+            if ( intSizeImgX > 0 ) {
+                double scale = intSizeImgX > intSizeImgY ? ( (double) intSizeX / intSizeImgX )
+                                                        : ( (double) intSizeY / (double) intSizeImgY );
+                g.scale( scale, scale );
+                // in the intSizeImgX/Y-Coordinatesystem
+
+                // rotation around the center of the image. center in intSizeImg-coordinates is sX (already scaled size)
+                // / 2 =>
+                // sX / scale
+                g.rotate( toRadians( r ), ( sX / scale ) / 2, ( sY / scale ) / 2 );
+
+                // same here: translation from center of rotation, so that image starts at 0, 0:
+                g.translate( ( sX / scale ) / 2 - intSizeImgX / 2, ( sY / scale ) / 2 - intSizeImgY / 2 );
+            }
+
+            g.drawImage( extImage, 0, 0, null );
         }
 
         // use the default Mark if there are no Marks / ExternalGraphics
@@ -600,8 +626,8 @@ public class Graphic implements Marshallable {
             BufferedImage extImage = mark.getAsImage( feature, intSizeX );
             g.drawImage( extImage, sX / 2 - intSizeX / 2, sY / 2 - intSizeY / 2, intSizeX, intSizeY, null );
         }
-        g.dispose();
 
+        g.dispose();
         return image;
     }
 
