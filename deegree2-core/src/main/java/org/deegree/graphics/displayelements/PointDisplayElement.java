@@ -38,7 +38,8 @@ package org.deegree.graphics.displayelements;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 
 import org.deegree.framework.log.ILogger;
@@ -68,7 +69,7 @@ class PointDisplayElement extends GeometryDisplayElement {
     /** Use serialVersionUID for interoperability. */
     private final static long serialVersionUID = -2979559276151855757L;
 
-    private transient static Image defaultImg = new BufferedImage( 7, 7, BufferedImage.TYPE_INT_ARGB );
+    private transient static BufferedImage defaultImg = new BufferedImage( 7, 7, BufferedImage.TYPE_INT_ARGB );
 
     static {
         Graphics g = defaultImg.getGraphics();
@@ -136,7 +137,7 @@ class PointDisplayElement extends GeometryDisplayElement {
                 return;
             }
             try {
-                Image image = defaultImg;
+                BufferedImage image = defaultImg;
 
                 double[] dis = ( (PointSymbolizer) symbolizer ).getGraphic().getDisplacement( feature );
 
@@ -175,8 +176,7 @@ class PointDisplayElement extends GeometryDisplayElement {
      * @param dis
      *            displacement
      */
-    private void drawPoint( Graphics2D g, Point point, GeoTransform projection, Image image, double[] dis ) {
-        Envelope destSize = projection.getDestRect();
+    private void drawPoint( Graphics2D g, Point point, GeoTransform projection, BufferedImage image, double[] dis ) {
         Position source = point.getPosition();
         int x = (int) Math.round( projection.getDestX( source.getX() ) + 0.5 + dis[0] );
         int y = (int) Math.round( projection.getDestY( source.getY() ) + 0.5 + dis[1] );
@@ -184,11 +184,8 @@ class PointDisplayElement extends GeometryDisplayElement {
         int x_ = x - ( image.getWidth( null ) >> 1 );
         int y_ = y - ( image.getHeight( null ) >> 1 );
 
-        int dx = Math.min( image.getWidth( null ), (int) destSize.getWidth() - x_ );
-        int dy = Math.min( image.getHeight( null ), (int) destSize.getHeight() - y_ );
-        int tx = Math.min( (int) destSize.getWidth(), x_ + image.getWidth( null ) );
-        int ty = Math.min( (int) destSize.getHeight(), y_ + image.getHeight( null ) );
-
-        g.drawImage( image, x_, y_, tx, ty, 0, 0, dx, dy, null );
+        TexturePaint p = new TexturePaint( image, new Rectangle( x_, y_, image.getWidth(), image.getHeight() ) );
+        g.setPaint( p );
+        g.fillRect( x_, y_, image.getWidth(), image.getHeight() );
     }
 }
