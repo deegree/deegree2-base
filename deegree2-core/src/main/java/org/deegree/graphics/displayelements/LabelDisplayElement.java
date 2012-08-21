@@ -71,6 +71,8 @@ public class LabelDisplayElement extends GeometryDisplayElement {
     // (and have not been set externally)
     private ArrayList<Label> labels = null;
 
+    private final double pixelsize;
+
     /**
      * Creates a new LabelDisplayElement object.
      * <p>
@@ -82,8 +84,9 @@ public class LabelDisplayElement extends GeometryDisplayElement {
      * @param symbolizer
      *            associated <tt>TextSymbolizer</tt>
      */
-    public LabelDisplayElement( Feature feature, Geometry geometry, TextSymbolizer symbolizer ) {
+    public LabelDisplayElement( Feature feature, Geometry geometry, TextSymbolizer symbolizer, double pixelsize ) {
         super( feature, geometry, symbolizer );
+        this.pixelsize = pixelsize;
         setLabel( symbolizer.getLabel() );
     }
 
@@ -124,7 +127,7 @@ public class LabelDisplayElement extends GeometryDisplayElement {
             Graphics2D g2D = (Graphics2D) g;
             if ( labels == null ) {
                 try {
-                    setLabels( LabelFactory.createLabels( this, projection, g2D ) );
+                    setLabels( LabelFactory.createLabels( this, projection, g2D, pixelsize ) );
                 } catch ( Exception e ) {
                     e.printStackTrace();
                 }

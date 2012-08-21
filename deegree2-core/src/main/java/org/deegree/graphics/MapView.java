@@ -175,6 +175,10 @@ public class MapView {
         return scale;
     }
 
+    public double getPixelSize() {
+        return pixelsize;
+    }
+    
     /**
      * Returns the current scale of the MapView.
      * @param g the graphics to calculate the scale from

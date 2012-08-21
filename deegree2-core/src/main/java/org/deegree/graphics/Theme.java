@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 
 package org.deegree.graphics;
 
@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.deegree.framework.log.ILogger;
 import org.deegree.framework.log.LoggerFactory;
+import org.deegree.framework.util.MapUtils;
 import org.deegree.framework.util.StringTools;
 import org.deegree.graphics.displayelements.DisplayElement;
 import org.deegree.graphics.displayelements.DisplayElementFactory;
@@ -56,14 +57,12 @@ import org.deegree.model.feature.FeatureProperty;
 import org.deegree.model.spatialschema.GeometryException;
 
 /**
- * A Theme is for usual a homogenious collection of Features coupled with a portrayal model for
- * their graphical representation. Considering the OGC Styled Layer Descriptor specification this is
- * not nessecary the case. In confirmation with the SLD a theme can be build from a lot of thematic
- * completly different feature types.
+ * A Theme is for usual a homogenious collection of Features coupled with a portrayal model for their graphical
+ * representation. Considering the OGC Styled Layer Descriptor specification this is not nessecary the case. In
+ * confirmation with the SLD a theme can be build from a lot of thematic completly different feature types.
  * <p>
  * </p>
- * From a theoretical point of view this isn't very satisfying. But it will be supported by the
- * <tt>Theme</tt> class.
+ * From a theoretical point of view this isn't very satisfying. But it will be supported by the <tt>Theme</tt> class.
  * <p>
  * </p>
  * Assigned to the Theme are:
@@ -73,11 +72,11 @@ import org.deegree.model.spatialschema.GeometryException;
  * <li>a Selector that offers method for selection and de-selection of features
  * <li>a event listener that handles event occuring on a theme that's for usual part of a map.
  * </ul>
- *
- *
+ * 
+ * 
  * @author <a href="mailto:poth@lat-lon.de">Andreas Poth</a>
  * @author last edited by: $Author$
- *
+ * 
  * @version $Revision$, $Date$
  */
 public class Theme {
@@ -94,13 +93,12 @@ public class Theme {
 
     /**
      * the MapView (map) the theme is associated to
-     *
+     * 
      */
     private MapView parent = null;
 
     /**
-     * this ArrayList contains all DisplayElements (and so the features) that are marked as
-     * selected.
+     * this ArrayList contains all DisplayElements (and so the features) that are marked as selected.
      */
     private List<Selector> selector = Collections.synchronizedList( new ArrayList<Selector>() );
 
@@ -109,7 +107,7 @@ public class Theme {
     private List<EventController> eventController = Collections.synchronizedList( new ArrayList<EventController>() );
 
     /**
-     *
+     * 
      * @param name
      * @param layer
      * @param styles
@@ -123,8 +121,10 @@ public class Theme {
 
     /**
      * sets the parent MapView of the Theme.
-     * @param parent of this theme
-     *
+     * 
+     * @param parent
+     *            of this theme
+     * 
      */
     public void setParent( MapView parent ) {
         this.parent = parent;
@@ -132,8 +132,9 @@ public class Theme {
 
     /**
      * returns the name of the theme
+     * 
      * @return the name of the theme
-     *
+     * 
      */
     public String getName() {
         return name;
@@ -141,12 +142,14 @@ public class Theme {
 
     /**
      * renders the layer to the submitted graphic context
-     * @param g to draw upon
+     * 
+     * @param g
+     *            to draw upon
      */
     public void paint( Graphics g ) {
 
         double scale = parent.getScale();
-        
+
         if ( layer instanceof LazyRasterLayer ) {
             // re-create raster displayelements to adapt current
             // current boundingbox
@@ -168,8 +171,11 @@ public class Theme {
 
     /**
      * renders the display elements matching the submitted ids
-     * @param g to draw upon
-     * @param ids of the id's to render
+     * 
+     * @param g
+     *            to draw upon
+     * @param ids
+     *            of the id's to render
      */
     public void paint( Graphics g, String[] ids ) {
 
@@ -195,7 +201,9 @@ public class Theme {
 
     /**
      * renders the selected display elements of the layer
-     * @param g to draw upon
+     * 
+     * @param g
+     *            to draw upon
      */
     public void paintSelected( Graphics g ) {
 
@@ -209,10 +217,10 @@ public class Theme {
             createFeatureDisplayElements();
         }
 
-//        if ( layer instanceof OWSRasterLayer ) {
-//            //
-//
-//        }
+        // if ( layer instanceof OWSRasterLayer ) {
+        // //
+        //
+        // }
 
         for ( int i = 0; i < displayElements.size(); i++ ) {
             DisplayElement de = displayElements.get( i );
@@ -225,7 +233,9 @@ public class Theme {
 
     /**
      * renders the highlighted display elements of the layer
-     * @param g to draw upon
+     * 
+     * @param g
+     *            to draw upon
      */
     public void paintHighlighted( Graphics g ) {
 
@@ -249,11 +259,12 @@ public class Theme {
     }
 
     /**
-     * A selector is a class that offers methods for selecting and de-selecting single
-     * DisplayElements or groups of DisplayElements. A selector may offers methods like 'select all
-     * DisplayElements within a specified bounding box' or 'select all DisplayElements thats area is
-     * larger than 120 km' etc.
-     * @param selector to which this theme will be added and vice versa
+     * A selector is a class that offers methods for selecting and de-selecting single DisplayElements or groups of
+     * DisplayElements. A selector may offers methods like 'select all DisplayElements within a specified bounding box'
+     * or 'select all DisplayElements thats area is larger than 120 km' etc.
+     * 
+     * @param selector
+     *            to which this theme will be added and vice versa
      */
     public void addSelector( Selector selector ) {
         this.selector.add( selector );
@@ -261,7 +272,8 @@ public class Theme {
     }
 
     /**
-     * @param selector to remove this theme from (and viceversa)
+     * @param selector
+     *            to remove this theme from (and viceversa)
      * @see org.deegree.graphics.Theme#addSelector(Selector)
      */
     public void removeSelector( Selector selector ) {
@@ -270,9 +282,10 @@ public class Theme {
     }
 
     /**
-     * A Highlighter is a class that is responsible for managing the highlight capabilities for one
-     * or more Themes.
-     * @param highlighter to add this theme to, and vice-versa
+     * A Highlighter is a class that is responsible for managing the highlight capabilities for one or more Themes.
+     * 
+     * @param highlighter
+     *            to add this theme to, and vice-versa
      */
     public void addHighlighter( Highlighter highlighter ) {
         this.highlighter.add( highlighter );
@@ -280,7 +293,8 @@ public class Theme {
     }
 
     /**
-     * @param highlighter to remove this theme from and vice-versa
+     * @param highlighter
+     *            to remove this theme from and vice-versa
      * @see org.deegree.graphics.Theme#addHighlighter(Highlighter)
      */
     public void removeHighlighter( Highlighter highlighter ) {
@@ -289,9 +303,10 @@ public class Theme {
     }
 
     /**
-     * adds an eventcontroller to the theme that's responsible for handling events that targets the
-     * theme.
-     * @param controller to add this theme to, and vice-versa
+     * adds an eventcontroller to the theme that's responsible for handling events that targets the theme.
+     * 
+     * @param controller
+     *            to add this theme to, and vice-versa
      */
     public void addEventController( ThemeEventController controller ) {
         eventController.add( controller );
@@ -299,7 +314,8 @@ public class Theme {
     }
 
     /**
-     * @param controller to remove this theme from and vice-versa
+     * @param controller
+     *            to remove this theme from and vice-versa
      * @see org.deegree.graphics.Theme#addEventController(ThemeEventController)
      */
     public void removeEventController( ThemeEventController controller ) {
@@ -308,10 +324,12 @@ public class Theme {
     }
 
     /**
-     * Sets the styles used for this <tt>Theme</tt>. If this method will be called all
-     * <tt>DisplayElement</tt>s will be recreated to consider the new style definitions.
-     * @param styles the style to set to this theme
-     *
+     * Sets the styles used for this <tt>Theme</tt>. If this method will be called all <tt>DisplayElement</tt>s will be
+     * recreated to consider the new style definitions.
+     * 
+     * @param styles
+     *            the style to set to this theme
+     * 
      */
     public void setStyles( UserStyle[] styles ) {
 
@@ -336,7 +354,7 @@ public class Theme {
         // keep LabelDisplayElements separate from the other elements
         // and append them to the end of the DisplayElement-list
         List<DisplayElement> labelDisplayElements = new ArrayList<DisplayElement>( 100 );
-        try {            
+        try {
             // instance of FeatureLayer
             int cnt = ( (FeatureLayer) layer ).getSize();
             for ( int i = 0; i < cnt; i++ ) {
@@ -358,7 +376,8 @@ public class Theme {
         try {
             // instance of RasterLayer
             RasterLayer rl = (RasterLayer) layer;
-            DisplayElement[] de = fac.createDisplayElement( rl.getRaster(), styles, rl.getRequest() );
+            DisplayElement[] de = fac.createDisplayElement( rl.getRaster(), styles, rl.getRequest(),
+                                                            parent.getPixelSize() );
             for ( int k = 0; k < de.length; k++ ) {
                 displayElements.add( de[k] );
             }
@@ -368,8 +387,8 @@ public class Theme {
     }
 
     /**
-     * creates <code>DisplayElement</code>s for <code>GridCoverage</code> instances that are
-     * loaded depending on current boundingbox.
+     * creates <code>DisplayElement</code>s for <code>GridCoverage</code> instances that are loaded depending on current
+     * boundingbox.
      */
     private void createLazyRasterDisplayElements() {
         displayElements.clear();
@@ -383,7 +402,7 @@ public class Theme {
                 // gc can be null if e.g. the area covered by the raster
                 // layer is outside the visible area.
                 if ( gc != null ) {
-                    DisplayElement[] de = fac.createDisplayElement( gc, styles );
+                    DisplayElement[] de = fac.createDisplayElement( gc, styles, parent.getPixelSize() );
                     for ( int k = 0; k < de.length; k++ ) {
                         displayElements.add( de[k] );
                     }
@@ -406,7 +425,7 @@ public class Theme {
                 double h = parent.getProjection().getDestRect().getHeight();
                 GridCoverage gc = rl.getRaster( parent.getBoundingBox(), w, h );
                 if ( gc != null ) {
-                    DisplayElement[] de = fac.createDisplayElement( gc, styles );
+                    DisplayElement[] de = fac.createDisplayElement( gc, styles, parent.getPixelSize() );
                     for ( int k = 0; k < de.length; k++ ) {
                         displayElements.add( de[k] );
                     }
@@ -418,7 +437,7 @@ public class Theme {
     }
 
     /**
-     *
+     * 
      * @param styles
      * @param fac
      * @param labelDisplayElements
@@ -436,7 +455,8 @@ public class Theme {
                             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
                             NoSuchMethodException, InvocationTargetException, GeometryException,
                             PropertyPathResolvingException {
-        DisplayElement[] de = fac.createDisplayElement( feature, styles );
+        DisplayElement[] de = fac.createDisplayElement( feature, styles, parent == null ? MapUtils.DEFAULT_PIXEL_SIZE
+                                                                                       : parent.getPixelSize() );
         for ( int k = 0; k < de.length; k++ ) {
             if ( de[k] instanceof LabelDisplayElement ) {
                 labelDisplayElements.add( de[k] );
@@ -454,8 +474,9 @@ public class Theme {
 
     /**
      * returns the styles used for this <tt>Theme</tt>.
+     * 
      * @return the styles used for this <tt>Theme</tt>.
-     *
+     * 
      */
     public UserStyle[] getStyles() {
         return styles;
@@ -463,8 +484,9 @@ public class Theme {
 
     /**
      * returns the layer that holds the data of the theme
+     * 
      * @return the layer that holds the data of the theme
-     *
+     * 
      */
     public Layer getLayer() {
         return layer;
@@ -473,9 +495,9 @@ public class Theme {
     /**
      * Returns all <tt>DisplayElements</tt> that this <tt>Theme</tt> contains.
      * <p>
-     *
+     * 
      * @return <tt>ArrayList</tt> containing <tt>DisplayElements</tt>
-     *
+     * 
      */
     public List<DisplayElement> getDisplayElements() {
         return displayElements;
@@ -483,8 +505,10 @@ public class Theme {
 
     /**
      * returns the <tt>DisplayElements</tt> of the Theme
-     * @param de to set to this theme.
-     *
+     * 
+     * @param de
+     *            to set to this theme.
+     * 
      */
     public void setDisplayElements( List<DisplayElement> de ) {
         this.displayElements = de;

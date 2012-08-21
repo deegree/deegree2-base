@@ -35,23 +35,13 @@
  ----------------------------------------------------------------------------*/
 package org.deegree.graphics.displayelements;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.TexturePaint;
-import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
 import org.deegree.framework.log.ILogger;
 import org.deegree.framework.log.LoggerFactory;
-import org.deegree.graphics.sld.Fill;
-import org.deegree.graphics.sld.GraphicFill;
-import org.deegree.graphics.sld.Halo;
-import org.deegree.model.feature.Feature;
-import org.deegree.model.filterencoding.FilterEvaluationException;
 
 /**
  * This is a rotated label with style information and screen coordinates, ready to be rendered to the view.
@@ -73,27 +63,13 @@ class RotatedLabel implements Label {
 
     private double rotation;
 
-    private double anchorPoint[];
-
-    // width and height of the caption
-    private int w;
-
-    // width and height of the caption
-    private int h;
-
     private Color color;
 
     private Font font;
 
-    private int descent;
-
-    private int ascent;
-
-    private Halo halo;
-
-    private Feature feature;
-
     private double opacity;
+
+    private int drawPointX, drawPointY, rotationX, rotationY;
 
     /**
      * 
@@ -112,46 +88,41 @@ class RotatedLabel implements Label {
      * @param displacement
      * @param opacity
      */
-    RotatedLabel( String caption, Font font, Color color, LineMetrics metrics, Feature feature, Halo halo, int x,
-                  int y, int w, int h, double rotation, double anchorPoint[], double[] displacement, double opacity ) {
+    RotatedLabel( String caption, Font font, Color color, int x, int y, int w, int h, double rotation,
+                  double anchorPoint[], double[] displacement, double opacity ) {
         this.caption = caption;
         this.font = font;
         this.color = color;
-        this.descent = (int) metrics.getDescent();
-        this.ascent = (int) metrics.getAscent();
-        this.feature = feature;
-        this.halo = halo;
         this.rotation = rotation;
-        this.anchorPoint = anchorPoint;
-
-        this.w = w;
-        this.h = h;
 
         this.opacity = opacity;
 
-        int dx = (int) ( -anchorPoint[0] * w + displacement[0] + 0.5 );
-        int dy = (int) ( anchorPoint[1] * h - displacement[1] + 0.5 );
         // vertices of label boundary
-        int[] xpoints = new int[4];
-        int[] ypoints = new int[4];
-        xpoints[0] = x + dx;
-        ypoints[0] = y + dy;
-        xpoints[1] = x + w + dx;
-        ypoints[1] = y + dy;
-        xpoints[2] = x + w + dx;
-        ypoints[2] = y - h + dy;
-        xpoints[3] = x + dx;
-        ypoints[3] = y - h + dy;
+        int[] xpoints = new int[5];
+        int[] ypoints = new int[5];
+        xpoints[0] = x - w / 2;
+        ypoints[0] = y - h / 2;
+        xpoints[1] = x + w / 2;
+        ypoints[1] = y - h / 2;
+        xpoints[2] = x + w / 2;
+        ypoints[2] = y + h / 2;
+        xpoints[3] = x - w / 2;
+        ypoints[3] = y + h / 2;
+        xpoints[4] = x;
+        ypoints[4] = y;
+
+        this.drawPointX = x - w / 2;
+        this.drawPointY = y + h / 2;
+        this.rotationX = (int) Math.round( x + displacement[0] + ( anchorPoint[0] - 0.5 ) * w );
+        this.rotationY = (int) Math.round( y - displacement[1] + ( anchorPoint[1] - 0.5 ) * h );
 
         // get rotated + translated points
-        this.xpoints = new int[4];
-        this.ypoints = new int[4];
-        int tx = xpoints[0];
-        int ty = ypoints[0];
+        this.xpoints = new int[5];
+        this.ypoints = new int[5];
 
         // transform all vertices of the boundary
-        for ( int i = 0; i < 4; i++ ) {
-            int[] point = transformPoint( xpoints[i], ypoints[i], tx, ty, rotation );
+        for ( int i = 0; i < 5; i++ ) {
+            int[] point = transformPoint( xpoints[i], ypoints[i], rotationX, rotationY, rotation );
             this.xpoints[i] = point[0];
             this.ypoints[i] = point[1];
         }
@@ -179,23 +150,6 @@ class RotatedLabel implements Label {
      *
      */
     public void paintBoundaries( Graphics2D g ) {
-        setColor( g, new Color( 0x888888 ), 0.5 );
-        g.fillPolygon( xpoints, ypoints, xpoints.length );
-        g.setColor( Color.BLACK );
-
-        // get the current transform
-        AffineTransform saveAT = g.getTransform();
-
-        // translation parameters (rotation)
-        AffineTransform transform = new AffineTransform();
-
-        // render the text
-        transform.rotate( rotation / 180d * Math.PI, xpoints[0], ypoints[0] );
-        g.setTransform( transform );
-        // g.drawString( caption, xpoints [0], ypoints [0] - descent);
-
-        // restore original transform
-        g.setTransform( saveAT );
     }
 
     /**
@@ -211,121 +165,18 @@ class RotatedLabel implements Label {
         AffineTransform saveAT = g.getTransform();
 
         // perform transformation
-        AffineTransform transform = new AffineTransform();
+        AffineTransform transform = (AffineTransform) saveAT.clone();
 
-        transform.rotate( rotation / 180d * Math.PI, xpoints[0], ypoints[0] );
+        transform.rotate( rotation / 180d * Math.PI, rotationX, rotationY );
         g.setTransform( transform );
-
-        // render the halo (only if specified)
-        if ( halo != null ) {
-            try {
-                paintHalo( g, halo, (int) ( xpoints[0] - w * anchorPoint[0] ),
-                           (int) ( ypoints[0] - descent + h * anchorPoint[1] ) );
-            } catch ( FilterEvaluationException e ) {
-                e.printStackTrace();
-            }
-        }
 
         // render the text
         setColor( g, color, opacity );
         g.setFont( font );
-        g.drawString( caption, (int) ( xpoints[0] - w * anchorPoint[0] ),
-                      (int) ( ypoints[0] - descent + h * anchorPoint[1] ) );
+        g.drawString( caption, drawPointX, drawPointY );
 
         // restore original transform
         g.setTransform( saveAT );
-    }
-
-    /**
-     * Renders the label's halo to the submitted <tt>Graphics2D</tt> context.
-     * <p>
-     * 
-     * @param g
-     *            <tt>Graphics2D</tt> context to be used
-     * @param halo
-     *            <tt>Halo</tt> from the SLD
-     * @param x
-     *            x-coordinate of the label
-     * @param y
-     *            y-coordinate of the label
-     * 
-     * @throws FilterEvaluationException
-     *             if the evaluation of a <tt>ParameterValueType</tt> fails
-     */
-    private void paintHalo( Graphics2D g, Halo halo, int x, int y )
-                            throws FilterEvaluationException {
-
-        int radius = (int) halo.getRadius( feature );
-
-        // only draw filled rectangle or circle, if Fill-Element is given
-        Fill fill = halo.getFill();
-
-        if ( fill != null ) {
-            GraphicFill gFill = fill.getGraphicFill();
-
-            if ( gFill != null ) {
-                BufferedImage texture = gFill.getGraphic().getAsImage( feature );
-                Rectangle anchor = new Rectangle( 0, 0, texture.getWidth( null ), texture.getHeight( null ) );
-                g.setPaint( new TexturePaint( texture, anchor ) );
-            } else {
-                double opacity = fill.getOpacity( feature );
-                Color color = fill.getFill( feature );
-                setColor( g, color, opacity );
-            }
-        } else {
-            g.setColor( Color.white );
-        }
-
-        // radius specified -> draw circle
-        if ( radius > 0 ) {
-            g.fillOval( ( x + ( w >> 1 ) ) - radius, y - ( ascent >> 1 ) - radius, radius << 1, radius << 1 );
-        }
-        // radius unspecified -> draw rectangle
-        else {
-            g.fillRect( x - 1, y - ascent - 1, w + 2, h + 2 );
-        }
-
-        // only stroke outline, if Stroke-Element is given
-        org.deegree.graphics.sld.Stroke stroke = halo.getStroke();
-
-        if ( stroke != null ) {
-            double opacity = stroke.getOpacity( feature );
-
-            if ( opacity > 0.01 ) {
-                Color color = stroke.getStroke( feature );
-                int alpha = (int) Math.round( opacity * 255 );
-                int red = color.getRed();
-                int green = color.getGreen();
-                int blue = color.getBlue();
-                color = new Color( red, green, blue, alpha );
-                g.setColor( color );
-
-                float[] dash = stroke.getDashArray( feature );
-
-                // use a simple Stroke if dash == null or dash length < 2
-                BasicStroke bs = null;
-                float strokeWidth = (float) stroke.getWidth( feature );
-
-                if ( ( dash == null ) || ( dash.length < 2 ) ) {
-                    bs = new BasicStroke( strokeWidth );
-                } else {
-                    bs = new BasicStroke( strokeWidth, stroke.getLineCap( feature ), stroke.getLineJoin( feature ),
-                                          10.0f, dash, stroke.getDashOffset( feature ) );
-                    bs = new BasicStroke( strokeWidth, stroke.getLineCap( feature ), stroke.getLineJoin( feature ),
-                                          1.0f, dash, 1.0f );
-                }
-
-                g.setStroke( bs );
-
-                // radius specified -> draw circle
-                if ( radius > 0 ) {
-                    g.drawOval( ( x + ( w >> 1 ) ) - radius, y - ( ascent >> 1 ) - radius, radius << 1, radius << 1 );
-                }// radius unspecified -> draw rectangle
-                else {
-                    g.drawRect( x - 1, y - ascent - 1, w + 2, h + 2 );
-                }
-            }
-        }
     }
 
     public int getX() {

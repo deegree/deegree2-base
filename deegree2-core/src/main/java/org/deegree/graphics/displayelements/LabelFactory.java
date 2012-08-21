@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.graphics.displayelements;
 
 import static java.lang.Double.parseDouble;
@@ -52,6 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deegree.framework.log.ILogger;
+import org.deegree.framework.util.MapUtils;
 import org.deegree.graphics.sld.Halo;
 import org.deegree.graphics.sld.LabelPlacement;
 import org.deegree.graphics.sld.LinePlacement;
@@ -79,14 +80,13 @@ import org.deegree.model.spatialschema.Surface;
  * Different geometry-types (of the LabelDisplayElement) imply different strategies concerning the way the
  * <tt>Labels</tt> are generated.
  * <p>
- *
+ * 
  * @author <a href="mailto:mschneider@lat-lon.de">Markus Schneider </a>
  * @version $Revision$ $Date$
  */
 public class LabelFactory {
 
     private static final ILogger LOG = getLogger( LabelFactory.class );
-
 
     /**
      * @param caption
@@ -116,9 +116,9 @@ public class LabelFactory {
                                                                                                    displacementY },
                                         opacity );
         }
-        return new RotatedLabel( caption, font, color, metrics, feature, halo, x, y, w, h, rotation,
+        return new RotatedLabel( caption, font, color, x, y, w, h, rotation,
                                  new double[] { anchorPointX, anchorPointY }, new double[] { displacementX,
-                                                                                             displacementY }, opacity );
+                                                                                            displacementY }, opacity );
 
     }
 
@@ -146,27 +146,29 @@ public class LabelFactory {
             return new HorizontalLabel( caption, font, color, metrics, feature, halo, x, y, w, h, anchorPoint,
                                         displacement, opacity );
         }
-        return new RotatedLabel( caption, font, color, metrics, feature, halo, x, y, w, h, rotation, anchorPoint,
-                                 displacement, opacity );
+        return new RotatedLabel( caption, font, color, x, y, w, h, rotation, anchorPoint, displacement, opacity );
 
     }
 
     /**
      * Generates label-representations for a given <tt>LabelDisplayElement</tt>.
      * <p>
-     *
+     * 
      * @param element
      * @param projection
      * @param g
      * @return label-representations
      * @throws Exception
      */
-    public static Label[] createLabels( LabelDisplayElement element, GeoTransform projection, Graphics2D g )
+    public static Label[] createLabels( LabelDisplayElement element, GeoTransform projection, Graphics2D g,
+                                        double pixelsize )
                             throws Exception {
 
         Label[] labels = new Label[0];
         Feature feature = element.getFeature();
         String caption = element.getLabel().evaluate( feature );
+
+        double fac = MapUtils.DEFAULT_PIXEL_SIZE / pixelsize;
 
         // sanity check: empty labels are ignored
         if ( caption == null || caption.trim().equals( "" ) ) {
@@ -180,7 +182,7 @@ public class LabelFactory {
         org.deegree.graphics.sld.Font sldFont = symbolizer.getFont();
         java.awt.Font font = new java.awt.Font( sldFont.getFamily( feature ), sldFont.getStyle( feature )
                                                                               | sldFont.getWeight( feature ),
-                                                sldFont.getSize( feature ) );
+                                                (int) Math.round( sldFont.getSize( feature ) * fac ) );
         g.setFont( font );
 
         // the bboxing is not a good solution, the geometry should be used instead (rectangle or
@@ -209,7 +211,6 @@ public class LabelFactory {
         LineMetrics metrics = font.getLineMetrics( caption, frc );
         int w = (int) bounds.getWidth();
         int h = (int) bounds.getHeight();
-        // int descent = (int) metrics.getDescent ();
 
         if ( geometry instanceof Point || geometry instanceof MultiPoint ) {
 
@@ -284,9 +285,9 @@ public class LabelFactory {
             if ( intersection != null ) {
                 List<Label> list = null;
                 if ( intersection instanceof Curve ) {
-                    list = createLabels( (Curve) intersection, element, g, projection );
+                    list = createLabels( (Curve) intersection, element, g, projection, pixelsize );
                 } else if ( intersection instanceof MultiCurve ) {
-                    list = createLabels( (MultiCurve) intersection, element, g, projection );
+                    list = createLabels( (MultiCurve) intersection, element, g, projection, pixelsize );
                 } else {
                     throw new Exception( "Intersection produced unexpected " + "geometry type: '"
                                          + intersection.getClass().getName() + "'!" );
@@ -308,7 +309,7 @@ public class LabelFactory {
      * Determines positions on the given <tt>MultiCurve</tt> where a caption could be drawn. For each of this positons,
      * three candidates are produced; one on the line, one above of it and one below.
      * <p>
-     *
+     * 
      * @param multiCurve
      * @param element
      * @param g
@@ -317,13 +318,13 @@ public class LabelFactory {
      * @throws FilterEvaluationException
      */
     public static List<Label> createLabels( MultiCurve multiCurve, LabelDisplayElement element, Graphics2D g,
-                                            GeoTransform projection )
+                                            GeoTransform projection, double pixelsize )
                             throws FilterEvaluationException {
 
         List<Label> placements = Collections.synchronizedList( new ArrayList<Label>( 10 ) );
         for ( int i = 0; i < multiCurve.getSize(); i++ ) {
             Curve curve = multiCurve.getCurveAt( i );
-            placements.addAll( createLabels( curve, element, g, projection ) );
+            placements.addAll( createLabels( curve, element, g, projection, pixelsize ) );
         }
         return placements;
     }
@@ -332,7 +333,7 @@ public class LabelFactory {
      * Determines positions on the given <tt>Curve</tt> where a caption could be drawn. For each of this positons, three
      * candidates are produced; one on the line, one above of it and one below.
      * <p>
-     *
+     * 
      * @param curve
      * @param element
      * @param g
@@ -341,23 +342,25 @@ public class LabelFactory {
      * @throws FilterEvaluationException
      */
     public static ArrayList<Label> createLabels( Curve curve, LabelDisplayElement element, Graphics2D g,
-                                                 GeoTransform projection )
+                                                 GeoTransform projection, double pixelsize )
                             throws FilterEvaluationException {
 
         Feature feature = element.getFeature();
 
+        double fac = MapUtils.DEFAULT_PIXEL_SIZE / pixelsize;
+
         // determine the placement type and parameters from the TextSymbolizer
         double perpendicularOffset = 0.0;
         int placementType = LinePlacement.TYPE_ABSOLUTE;
-        double lineWidth = 3.0;
-        int gap = 6;
+        double lineWidth = 3.0 * fac;
+        int gap = (int) Math.round( 6 * fac );
         TextSymbolizer symbolizer = ( (TextSymbolizer) element.getSymbolizer() );
         if ( symbolizer.getLabelPlacement() != null ) {
             LinePlacement linePlacement = symbolizer.getLabelPlacement().getLinePlacement();
             if ( linePlacement != null ) {
                 placementType = linePlacement.getPlacementType( feature );
                 perpendicularOffset = linePlacement.getPerpendicularOffset( feature );
-                lineWidth = linePlacement.getLineWidth( feature );
+                lineWidth = linePlacement.getLineWidth( feature ) * fac;
                 gap = linePlacement.getGap( feature );
             }
         }
@@ -367,7 +370,7 @@ public class LabelFactory {
         org.deegree.graphics.sld.Font sldFont = symbolizer.getFont();
         java.awt.Font font = new java.awt.Font( sldFont.getFamily( feature ), sldFont.getStyle( feature )
                                                                               | sldFont.getWeight( feature ),
-                                                sldFont.getSize( feature ) );
+                                                (int) Math.round( sldFont.getSize( feature ) * fac ) );
         g.setFont( font );
         FontRenderContext frc = g.getFontRenderContext();
         Rectangle2D bounds = font.getStringBounds( caption, frc );
@@ -448,7 +451,6 @@ public class LabelFactory {
                 boxStartY += offy;
                 boxEndX += offx;
                 boxEndY += offy;
-
                 double opacity = symbolizer.getFill() == null ? 1 : symbolizer.getFill().getOpacity( feature );
 
                 switch ( placementType ) {
@@ -512,7 +514,7 @@ public class LabelFactory {
      * The ideal line is thought to be running from left to right, the left deviation value generally is above the line,
      * the right value is below.
      * <p>
-     *
+     * 
      * @param start
      *            starting point of the linestring
      * @param end
@@ -596,7 +598,7 @@ public class LabelFactory {
      * Finds a point on the line between p1 and p2 that has a certain distance from point p0 (provided that there is
      * such a point).
      * <p>
-     *
+     * 
      * @param p0
      *            point that is used as reference point for the distance
      * @param p1
@@ -740,7 +742,7 @@ public class LabelFactory {
 
     /**
      * Calculates the screen coordinates of the given <tt>Curve</tt>. physical screen coordinates
-     *
+     * 
      * @param projection
      * @param curve
      * @return the coordinates
@@ -784,10 +786,10 @@ public class LabelFactory {
 
     /**
      * Returns the physical (screen) coordinates.
-     *
+     * 
      * @param projection
      * @param geometry
-     *
+     * 
      * @return physical screen coordinates
      */
     public static int[] calcScreenCoordinates( GeoTransform projection, Geometry geometry ) {

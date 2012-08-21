@@ -144,7 +144,7 @@ public class LabelOptimizer extends AbstractOptimizer {
                 continue;
 
             element.setLabels( dummyLabels );
-            ( (ScaledFeature) element.getFeature() ).setScale( scale / 0.00028 );
+            ( (ScaledFeature) element.getFeature() ).setScale( scale / mapView.getPixelSize() );
             choices.addAll( LabelChoiceFactory.createLabelChoices( element, g, projection ) );
         }
 

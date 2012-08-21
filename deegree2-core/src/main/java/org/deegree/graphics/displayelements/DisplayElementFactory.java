@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.graphics.displayelements;
 
 import java.lang.reflect.Constructor;
@@ -80,11 +80,11 @@ import org.deegree.ogcwebservices.wms.operation.GetMap;
 
 /**
  * Factory class for the different kinds of {@link DisplayElement}s.
- *
+ * 
  * @author <a href="mailto:poth@lat-lon.de">Andreas Poth</a>
  * @author <a href="mailto:mschneider@lat-lon.de">Markus Schneider</a>
  * @author last edited by: $Author$
- *
+ * 
  * @version $Revision$, $Date$
  */
 public class DisplayElementFactory {
@@ -103,16 +103,16 @@ public class DisplayElementFactory {
      * @throws GeometryException
      * @throws PropertyPathResolvingException
      */
-    public DisplayElement[] createDisplayElement( Object o, UserStyle[] styles )
+    public DisplayElement[] createDisplayElement( Object o, UserStyle[] styles, double pixelsize )
                             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
                             NoSuchMethodException, InvocationTargetException, GeometryException,
                             PropertyPathResolvingException {
-        return createDisplayElement( o, styles, null );
+        return createDisplayElement( o, styles, null, pixelsize );
     }
 
     /**
      * Returns the display elements for a {@link Feature} or {@link GridCoverage}.
-     *
+     * 
      * @param o
      * @param styles
      * @param request
@@ -123,10 +123,10 @@ public class DisplayElementFactory {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws GeometryException
-     *
+     * 
      * @throws PropertyPathResolvingException
      */
-    public DisplayElement[] createDisplayElement( Object o, UserStyle[] styles, GetMap request )
+    public DisplayElement[] createDisplayElement( Object o, UserStyle[] styles, GetMap request, double pixelsize )
                             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
                             NoSuchMethodException, InvocationTargetException, GeometryException,
                             PropertyPathResolvingException {
@@ -179,7 +179,8 @@ public class DisplayElementFactory {
 
                                         for ( int u = 0; u < symbolizers.length; u++ ) {
                                             DisplayElement displayElement = buildDisplayElement( feature,
-                                                                                                 symbolizers[u] );
+                                                                                                 symbolizers[u],
+                                                                                                 pixelsize );
                                             if ( displayElement != null ) {
                                                 list.add( displayElement );
                                             }
@@ -217,7 +218,7 @@ public class DisplayElementFactory {
 
     /**
      * splits a feature into n-Features if at least one of a features geometries are a {@link MultiGeometry}
-     *
+     * 
      * @param feature
      * @return list of {@link Feature}
      */
@@ -273,7 +274,7 @@ public class DisplayElementFactory {
 
     /**
      * Builds a {@link DisplayElement} using the given {@link Feature} or {@link GridCoverage} and {@link Symbolizer}.
-     *
+     * 
      * @param o
      *            contains the geometry or raster information (Feature or GridCoverage)
      * @param symbolizer
@@ -291,7 +292,7 @@ public class DisplayElementFactory {
      * @throws GeometryException
      * @throws PropertyPathResolvingException
      */
-    public static DisplayElement buildDisplayElement( Object o, Symbolizer symbolizer )
+    public static DisplayElement buildDisplayElement( Object o, Symbolizer symbolizer, double pixelsize )
                             throws IncompatibleGeometryTypeException, ClassNotFoundException, IllegalAccessException,
                             InstantiationException, NoSuchMethodException, InvocationTargetException,
                             GeometryException, PropertyPathResolvingException {
@@ -324,7 +325,7 @@ public class DisplayElementFactory {
             } else if ( symbolizer instanceof PolygonSymbolizer ) {
                 displayElement = buildPolygonDisplayElement( feature, geometry, (PolygonSymbolizer) symbolizer );
             } else if ( symbolizer instanceof TextSymbolizer ) {
-                displayElement = buildLabelDisplayElement( feature, geometry, (TextSymbolizer) symbolizer );
+                displayElement = buildLabelDisplayElement( feature, geometry, (TextSymbolizer) symbolizer, pixelsize );
             }
         } else {
             if ( symbolizer instanceof RasterSymbolizer ) {
@@ -339,7 +340,7 @@ public class DisplayElementFactory {
     /**
      * Builds a {@link DisplayElement} using the given {@link Feature} or {@link GridCoverage} and the default
      * {@link Symbolizer}.
-     *
+     * 
      * @param o
      *            contains the geometry or raster information (Feature or GridCoverage)
      * @throws IncompatibleGeometryTypeException
@@ -393,7 +394,7 @@ public class DisplayElementFactory {
 
     /**
      * Creates a {@link PointDisplayElement} using the given geometry and style information.
-     *
+     * 
      * @param feature
      *            associated feature (source of the geometry information)
      * @param geom
@@ -457,7 +458,7 @@ public class DisplayElementFactory {
 
     /**
      * Creates a {@link LineStringDisplayElement} using the given geometry and style information.
-     *
+     * 
      * @param feature
      *            associated feature (source of the geometry information)
      * @param geom
@@ -474,8 +475,7 @@ public class DisplayElementFactory {
      * @throws InvocationTargetException
      * @throws GeometryException
      */
-    public static LineStringDisplayElement buildLineStringDisplayElement(
-                                                                          Feature feature,
+    public static LineStringDisplayElement buildLineStringDisplayElement( Feature feature,
                                                                           org.deegree.model.spatialschema.Geometry geom,
                                                                           LineSymbolizer sym )
                             throws IncompatibleGeometryTypeException, ClassNotFoundException, IllegalAccessException,
@@ -526,7 +526,7 @@ public class DisplayElementFactory {
 
     /**
      * Transforms a {@link Surface} into a {@link MultiCurve}.
-     *
+     * 
      * @param geom
      * @return MultiCurve
      */
@@ -553,7 +553,7 @@ public class DisplayElementFactory {
 
     /**
      * Creates a {@link PolygonDisplayElement} using the given geometry and style information.
-     *
+     * 
      * @param feature
      *            associated feature (source of the geometry information)
      * @param geom
@@ -597,7 +597,7 @@ public class DisplayElementFactory {
 
     /**
      * Creates a {@link LabelDisplayElement} using the given geometry and style information.
-     *
+     * 
      * @param feature
      *            associated feature (source of the geometry information and label caption)
      * @param geom
@@ -608,29 +608,17 @@ public class DisplayElementFactory {
      *             if the geometry property is not a <code>Point</code>, a <code>Surface</code> or
      *             <code>MultiSurface</code>
      * @return constructed <code>LabelDisplayElement</code>
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
      */
     public static LabelDisplayElement buildLabelDisplayElement( Feature feature,
                                                                 org.deegree.model.spatialschema.Geometry geom,
-                                                                TextSymbolizer sym )
-                            throws IncompatibleGeometryTypeException, ClassNotFoundException, IllegalAccessException,
-                            InstantiationException, NoSuchMethodException, InvocationTargetException {
+                                                                TextSymbolizer sym, double pixelsize )
+                            throws IncompatibleGeometryTypeException {
 
         LabelDisplayElement displayElement = null;
 
         if ( geom instanceof Point || geom instanceof MultiPoint || geom instanceof Surface
              || geom instanceof MultiSurface || geom instanceof Curve || geom instanceof MultiCurve ) {
-            String className = sym.getResponsibleClass();
-            Class<?> clss = Class.forName( className );
-            Class<?>[] param = new Class[] { Feature.class, org.deegree.model.spatialschema.Geometry.class,
-                                            TextSymbolizer.class };
-            Object[] values = new Object[] { feature, geom, sym };
-            Constructor<?> constructor = clss.getConstructor( param );
-            displayElement = (LabelDisplayElement) constructor.newInstance( values );
+            displayElement = new LabelDisplayElement( feature, geom, sym, pixelsize );
         } else {
             throw new IncompatibleGeometryTypeException( "Tried to create a LabelDisplayElement from a geometry with "
                                                          + "an incompatible / unsupported type: '"
@@ -642,12 +630,12 @@ public class DisplayElementFactory {
 
     /**
      * Creates a {@link RasterDisplayElement} from the given {@link GridCoverage}.
-     *
+     * 
      * @param gc
      *            grid coverage (source of the raster data)
      * @param sym
      *            raster symbolizer
-     *
+     * 
      * @return RasterDisplayElement
      */
     public static RasterDisplayElement buildRasterDisplayElement( GridCoverage gc, RasterSymbolizer sym ) {
