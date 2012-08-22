@@ -2,9 +2,9 @@
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
  Copyright (C) 2001-2009 by:
-   Department of Geography, University of Bonn
+ Department of Geography, University of Bonn
  and
-   lat/lon GmbH
+ lat/lon GmbH
 
  This library is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -32,22 +32,28 @@
  http://www.geographie.uni-bonn.de/deegree/
 
  e-mail: info@deegree.org
-----------------------------------------------------------------------------*/
+ ----------------------------------------------------------------------------*/
 package org.deegree.enterprise.servlet;
 
+import org.deegree.ogcwebservices.wfs.WFService;
+import org.deegree.ogcwebservices.wfs.WFServiceFactory;
+import org.deegree.ogcwebservices.wfs.configuration.WFSConfiguration;
+import org.deegree.ogcwebservices.wfs.configuration.WFSConfigurationDocument;
+
+import alltests.Configuration;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Test with mock object to perform http get/post request.
- *
+ * 
  * @author <a href="mailto:tfr@users.sourceforge.net">Torsten Friebe </a>
- *
+ * 
  * @author last edited by: $Author: mschneider $
- *
+ * 
  * @version 2.0, $Revision: 18195 $, $Date: 2009-06-18 17:55:39 +0200 (Do, 18 Jun 2009) $
- *
+ * 
  * @since 2.0
  */
 public class WFSHandlerTest extends TestCase {
@@ -61,7 +67,10 @@ public class WFSHandlerTest extends TestCase {
      */
     protected void setUp()
                             throws Exception {
-        super.setUp();
+        WFSConfigurationDocument confDoc = new WFSConfigurationDocument();
+        confDoc.load( Configuration.getWFSConfigurationURL() );
+        WFSConfiguration conf = confDoc.getConfiguration();
+        WFServiceFactory.setConfiguration( conf );
     }
 
     /*
