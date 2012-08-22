@@ -2,15 +2,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.deegree2</groupId>
   <artifactId>deegree2-base</artifactId>
-  <version>2.6-pre1</version>
+  <version>2.6-pre2-SNAPSHOT</version>
   <name>deegree2-base</name>
   <description>deegree2-base</description>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.wald.intevation.org/svn/deegree/deegree3/tags/deegree2-base-2.6-pre1</connection>
-    <developerConnection>scm:svn:svn+ssh://svn.wald.intevation.org/deegree/deegree3/tags/deegree2-base-2.6-pre1</developerConnection>
-    <url>http://svn.wald.intevation.org/svn/deegree/deegree3/tags/deegree2-base-2.6-pre1</url>
+    <connection>scm:svn:http://svn.wald.intevation.org/svn/deegree/deegree2/deegree2-base/trunk</connection>
+    <developerConnection>scm:svn:svn+ssh://svn.wald.intevation.org/deegree/deegree2/deegree2-base/trunk</developerConnection>
+    <url>http://svn.wald.intevation.org/svn/deegree/deegree2/deegree2-base/trunk</url>
   </scm>
 
   <modules>
