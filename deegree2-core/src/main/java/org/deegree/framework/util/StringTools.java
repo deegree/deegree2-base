@@ -88,7 +88,8 @@ public class StringTools {
     public static String concat( int size, Object... objects ) {
         StringBuilder sbb = new StringBuilder( size );
         for ( int i = 0; i < objects.length; i++ ) {
-            sbb.append( objects[i] );
+            if ( objects[i] != null )
+                sbb.append( objects[i] );
         }
         return sbb.toString();
     }
@@ -490,7 +491,7 @@ public class StringTools {
 
         return array;
     }
-    
+
     /**
      * convert the array of string like [(x1,y1),(x2,y2)...] into an array of float values [x1,y1,x2,y2...]
      * 
@@ -822,8 +823,10 @@ public class StringTools {
 
     /**
      * prints a map with one line for each key-value pair
+     * 
      * @param map
-     * @param ps if ps is null System.out will be used 
+     * @param ps
+     *            if ps is null System.out will be used
      */
     public static final void printMap( Map<?, ?> map, PrintStream ps ) {
         if ( ps == null ) {
