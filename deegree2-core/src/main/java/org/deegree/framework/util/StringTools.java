@@ -1,7 +1,7 @@
 //$HeadURL$
 /*----------------------------------------------------------------------------
  This file is part of deegree, http://deegree.org/
- Copyright (C) 2001-2009 by:
+ Copyright (C) 2001-2012 by:
  Department of Geography, University of Bonn
  and
  lat/lon GmbH
@@ -60,6 +60,7 @@ import org.xml.sax.SAXException;
 /**
  * this is a collection of some methods that extends the functionality of the sun-java string class.
  * 
+ * @author <a href="mailto:wanhoff@lat-lon.de">Jeronimo Wanhoff</a>
  * @author <a href="mailto:poth@lat-lon.de">Andreas Poth</a>
  * @author last edited by: $Author$
  * 
@@ -75,15 +76,13 @@ public class StringTools {
     private static Map<String, Map<String, String>> localeMap;
 
     /**
-     * concatenates an array of strings using a
-     * 
-     * @see StringBuffer
+     * concatenates an array of strings using a {@link StringBuffer}.
      * 
      * @param size
      *            estimated size of the target string
      * @param objects
      *            toString() will be called for each object to append it to the result string
-     * @return the concatenated String
+     * @return the concatenated string
      */
     public static String concat( int size, Object... objects ) {
         StringBuilder sbb = new StringBuilder( size );
