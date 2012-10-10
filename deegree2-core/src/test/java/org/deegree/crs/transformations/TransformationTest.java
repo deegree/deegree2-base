@@ -39,8 +39,6 @@ package org.deegree.crs.transformations;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
 
-import junit.framework.TestCase;
-
 import org.deegree.crs.Identifiable;
 import org.deegree.crs.components.Axis;
 import org.deegree.crs.components.Ellipsoid;
@@ -51,20 +49,14 @@ import org.deegree.crs.coordinatesystems.GeocentricCRS;
 import org.deegree.crs.coordinatesystems.GeographicCRS;
 import org.deegree.crs.coordinatesystems.ProjectedCRS;
 import org.deegree.crs.projections.Projection;
-import org.deegree.crs.projections.ProjectionTest;
 import org.deegree.crs.projections.azimuthal.StereographicAlternative;
 import org.deegree.crs.projections.cylindric.Mercator;
 import org.deegree.crs.projections.cylindric.TransverseMercator;
 import org.deegree.crs.transformations.helmert.Helmert;
-import org.deegree.framework.log.ILogger;
-import org.deegree.framework.log.LoggerFactory;
 import org.deegree.model.crs.CRSFactory;
 import org.deegree.model.crs.CRSTransformationException;
 import org.deegree.model.crs.CoordinateSystem;
-import org.deegree.model.crs.GeoTransformer;
 import org.deegree.model.crs.UnknownCRSException;
-import org.deegree.model.spatialschema.GeometryFactory;
-import org.deegree.model.spatialschema.Point;
 
 /**
  * <code>TransformationTest</code> a junit test class for testing the accuracy of various transformations.
@@ -76,17 +68,7 @@ import org.deegree.model.spatialschema.Point;
  * @version $Revision: 30132 $, $Date: 2011-03-22 16:00:06 +0100 (Di, 22 Mrz 2011) $
  * 
  */
-public class TransformationTest extends TestCase {
-
-    private static ILogger LOG = LoggerFactory.getLogger( ProjectionTest.class );
-
-    private final static double METER_EPSILON = 0.15;
-
-    private final static double DEGREE_EPSILON = 0.0000015;
-
-    private final static Point3d epsilon = new Point3d( METER_EPSILON, METER_EPSILON, 0.4 );
-
-    private final static Point3d epsilonDegree = new Point3d( DEGREE_EPSILON, DEGREE_EPSILON, 0.4 );
+public class TransformationTest extends TransformationAccuracy {
 
     /**
      * Used axis
@@ -206,170 +188,6 @@ public class TransformationTest extends TestCase {
 
     private final static ProjectedCRS projected_OSM = new ProjectedCRS( projection_OSM, axis_projection,
                                                                         new String[] { "OSM" } );
-
-    /**
-     * Creates a {@link GeoTransformer} for the given coordinate system.
-     * 
-     * @param targetCrs
-     *            to which incoming coordinates will be transformed.
-     * @return the transformer which is able to transform coordinates to the given crs..
-     */
-    private GeoTransformer getGeotransformer( CoordinateSystem targetCrs ) {
-        assertNotNull( targetCrs );
-        return new GeoTransformer( targetCrs );
-    }
-
-    /**
-     * Creates an epsilon string with following layout axis.getName: origPoint - resultPoint = epsilon Unit.getName().
-     * 
-     * @param sourceCoordinate
-     *            on the given axis
-     * @param targetCoordinate
-     *            on the given axis
-     * @param allowedEpsilon
-     *            defined by test.
-     * @param axis
-     *            of the coordinates
-     * @return a String representation.
-     */
-    private String createEpsilonString( boolean failure, double sourceCoordinate, double targetCoordinate,
-                                        double allowedEpsilon, Axis axis ) {
-        double epsilon = sourceCoordinate - targetCoordinate;
-        StringBuilder sb = new StringBuilder( 400 );
-        sb.append( axis.getName() ).append( " (result - orig = error [allowedError]): " );
-        sb.append( sourceCoordinate ).append( " - " ).append( targetCoordinate );
-        sb.append( " = " ).append( epsilon ).append( axis.getUnits() );
-        sb.append( " [" ).append( allowedEpsilon ).append( axis.getUnits() ).append( "]" );
-        if ( failure ) {
-            sb.append( " [FAILURE]" );
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Transforms the given coordinates in the sourceCRS to the given targetCRS and checks if they lie within the given
-     * epsilon range to the reference point. If successful the transformed will be logged.
-     * 
-     * @param sourcePoint
-     *            to transform
-     * @param targetPoint
-     *            to which the result shall be checked.
-     * @param epsilons
-     *            for each axis
-     * @param sourceCRS
-     *            of the origPoint
-     * @param targetCRS
-     *            of the targetPoint.
-     * @return the string containing the success string.
-     * @throws CRSTransformationException
-     * @throws AssertionError
-     *             if one of the axis of the transformed point do not lie within the given epsilon range.
-     */
-    private String doAccuracyTest( Point3d sourcePoint, Point3d targetPoint, Point3d epsilons,
-                                   CoordinateSystem sourceCRS, CoordinateSystem targetCRS )
-                            throws CRSTransformationException {
-        assertNotNull( sourceCRS );
-        assertNotNull( targetCRS );
-        assertNotNull( sourcePoint );
-        assertNotNull( targetPoint );
-        assertNotNull( epsilons );
-
-        GeoTransformer transformer = getGeotransformer( targetCRS );
-        Point point = GeometryFactory.createPoint( sourcePoint.x, sourcePoint.y, sourcePoint.z, sourceCRS );
-
-        Point pp = (Point) transformer.transform( point );
-        assertNotNull( pp );
-        boolean xFail = Math.abs( pp.getX() - targetPoint.x ) > epsilons.x;
-        String xString = createEpsilonString( xFail, pp.getX(), targetPoint.x, epsilons.x,
-                                              targetCRS.getCRS().getAxis()[0] );
-        boolean yFail = Math.abs( pp.getY() - targetPoint.y ) > epsilons.y;
-        String yString = createEpsilonString( yFail, pp.getY(), targetPoint.y, epsilons.y,
-                                              targetCRS.getCRS().getAxis()[1] );
-
-        // Z-Axis if available.
-        boolean zFail = false;
-        String zString = "";
-        if ( targetCRS.getDimension() == 3 ) {
-            zFail = Math.abs( pp.getZ() - targetPoint.z ) > epsilons.z;
-            zString = createEpsilonString( zFail, pp.getZ(), targetPoint.z, epsilons.z, targetCRS.getCRS().getAxis()[2] );
-        }
-        StringBuilder sb = new StringBuilder();
-        if ( xFail || yFail || zFail ) {
-            sb.append( "[FAILED] " );
-        } else {
-            sb.append( "[SUCCESS] " );
-        }
-        sb.append( "Transformation (" ).append( sourceCRS.getIdentifier() );
-        sb.append( " -> " ).append( targetCRS.getIdentifier() ).append( ")\n" );
-        sb.append( xString );
-        sb.append( "\n" ).append( yString );
-        if ( targetCRS.getDimension() == 3 ) {
-            sb.append( "\n" ).append( zString );
-        }
-        if ( xFail || yFail || zFail ) {
-            throw new AssertionError( sb.toString() );
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Do an forward and inverse accuracy test.
-     * 
-     * @param sourceCRS
-     * @param targetCRS
-     * @param source
-     * @param target
-     * @param forwardEpsilon
-     * @param inverseEpsilon
-     * @throws CRSTransformationException
-     */
-    private void doForwardAndInverse( org.deegree.crs.coordinatesystems.CoordinateSystem sourceCRS,
-                                      org.deegree.crs.coordinatesystems.CoordinateSystem targetCRS, Point3d source,
-                                      Point3d target, Point3d forwardEpsilon, Point3d inverseEpsilon )
-                            throws CRSTransformationException {
-        StringBuilder output = new StringBuilder();
-        output.append( "Transforming forward crs with id: '" );
-        output.append( sourceCRS.getIdentifier() );
-        output.append( "' and crs with id: '" );
-        output.append( targetCRS.getIdentifier() );
-        output.append( "'." );
-
-        // forward transform.
-        boolean forwardSuccess = true;
-        try {
-            output.append( doAccuracyTest( source, target, forwardEpsilon, CRSFactory.create( sourceCRS ),
-                                           CRSFactory.create( targetCRS ) ) );
-        } catch ( AssertionError ae ) {
-            output.append( ae.getLocalizedMessage() );
-            forwardSuccess = false;
-        }
-        if ( !forwardSuccess ) {
-            LOG.logError( output.toString() );
-        }
-
-        // inverse transform.
-        output = new StringBuilder( "Transforming inverse crs with id: '" );
-        output.append( targetCRS.getIdentifier() );
-        output.append( "' and crs with id: '" );
-        output.append( sourceCRS.getIdentifier() );
-        output.append( "'." );
-        boolean inverseSuccess = true;
-        try {
-            output.append( doAccuracyTest( target, source, inverseEpsilon, CRSFactory.create( targetCRS ),
-                                           CRSFactory.create( sourceCRS ) ) );
-        } catch ( AssertionError ae ) {
-            output.append( ae.getLocalizedMessage() );
-            inverseSuccess = false;
-        }
-        if ( !inverseSuccess ) {
-            LOG.logError( output.toString() );
-        }
-        // LOG.logInfo( output.toString() );
-
-        assertEquals( true, forwardSuccess );
-        assertEquals( true, inverseSuccess );
-
-    }
 
     /**
      * Test the forward/inverse transformation from a compound_projected crs (EPSG:28992) to another compound_projected
