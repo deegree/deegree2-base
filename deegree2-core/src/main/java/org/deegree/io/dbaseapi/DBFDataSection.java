@@ -128,6 +128,7 @@ public class DBFDataSection {
 
         // write every field on the ArrayList to the data byte array
         for ( int i = 0; i < recData.size(); i++ ) {
+        	if (fieldDesc[i] != null) {
             byte[] fddata = this.fieldDesc[i].getFieldDescriptor();
             switch ( fddata[11] ) {
 
@@ -165,12 +166,12 @@ public class DBFDataSection {
                     datasec.data[offset + j] = 0x0;
                 break;
             case (byte) 'D':
-                if ( recData.get( i ) != null && !( recData.get( i ) instanceof Date ) )
+                if ( recData.get( i ) != null && !( recData.get( i ) instanceof Date ) )           
                     throw new DBaseException( "invalid data type at field: " + i );
                 if ( recData.get( i ) == null ) {
                     b = new byte[0];
                 } else {
-                    SimpleDateFormat sdf_ = new SimpleDateFormat( "yyyy-MM-dd", Locale.getDefault() );
+                    SimpleDateFormat sdf_ = new SimpleDateFormat( "yyyyMMdd", Locale.getDefault() );
                     b = sdf_.format( (Date) recData.get( i )  ).getBytes();
                 }                
                 if ( b.length > fddata[16] )
@@ -189,7 +190,7 @@ public class DBFDataSection {
 
             offset += fddata[16];
 
-        }
+        }}
 
         // puts the record to the ArrayList (container)
         data.add( index, datasec );

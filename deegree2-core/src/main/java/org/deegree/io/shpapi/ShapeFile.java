@@ -761,6 +761,7 @@ public class ShapeFile {
         // get properties names and types and create a FieldDescriptor
         // for each properties except the geometry-property
         cnt = 0;
+        // TODO for loop head
         for ( int i = 0; i < ftp.length; i++ ) {
             int pos = ftp[i].getName().getLocalName().lastIndexOf( '.' );
             if ( pos < 0 ) {
@@ -792,9 +793,13 @@ public class ShapeFile {
                 fieldDesc[cnt++] = new FieldDescriptor( s, "C", (byte)len, (byte) 0 );
             } else if ( ftp[i].getType() == Types.DATE ) {
                 fieldDesc[cnt++] = new FieldDescriptor( s, "D", (byte) 12, (byte) 0 );
-            } else {
+            } else if ( ftp[i].getType() == Types.TIMESTAMP) {
+                fieldDesc[cnt++] = new FieldDescriptor( s, "D", (byte) 12, (byte) 0 );
+            }
+            else {
             }
         }
+        
         // initialize/create DBaseFile
         try {
             dbf = new DBaseFile( fileName, fieldDesc );
@@ -833,9 +838,7 @@ public class ShapeFile {
         // loop throug the Geometries of the feature collection anf write them
         // to a bytearray
         for ( int i = 0; i < getGeometryCount( fc ); i++ ) {
-            if ( i % 1000 == 0 ) {
-                System.gc();
-            }
+        	
             // write i'th features properties to a ArrayList
             PropertyType[] ftp = fc.getFeature( 0 ).getFeatureType().getProperties();
             ArrayList<Object> vec = new ArrayList<Object>( ftp.length );
@@ -857,7 +860,7 @@ public class ShapeFile {
                      || ( ftp[j].getType() == Types.SMALLINT ) || ( ftp[j].getType() == Types.CHAR )
                      || ( ftp[j].getType() == Types.FLOAT ) || ( ftp[j].getType() == Types.DOUBLE )
                      || ( ftp[j].getType() == Types.NUMERIC ) || ( ftp[j].getType() == Types.VARCHAR )
-                     || ( ftp[j].getType() == Types.DATE ) ) {
+                     || ( ftp[j].getType() == Types.DATE ) || ( ftp[j].getType() == Types.TIMESTAMP) ) {
                     vec.add( obj );
                 }
 
