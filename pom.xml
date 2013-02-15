@@ -57,7 +57,21 @@
       </snapshots>
     </repository>
   </repositories>
-  
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>deegree-plugin-repo</id>
+      <url>http://repo.deegree.org/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
   <build>
     <plugins>
        <plugin>
